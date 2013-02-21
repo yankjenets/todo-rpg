@@ -99,7 +99,7 @@ app.post("/new_user/:user/:pass", function(request, response) {
       success: true
     });
   }
-}
+});
 
 // get a user's todo list
 app.get("/:user/data", function(request, response){
