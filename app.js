@@ -101,7 +101,7 @@ app.post("/new_user/:user/:pass", function(request, response) {
   }
 });
 
-// get a user's todo list
+// get a user's data
 app.get("/:user/data", function(request, response){
   var username = request.params.username;
   var userData = getUserData(username);
@@ -122,7 +122,7 @@ app.post("/:user/todo", function(request, response) {
     "priority": request.body.priority,
     "due_date": request.body.due_date,
     "desc": request.body.desc,
-    "timestamp": new Date(),
+    "timestamp": request.body.timestamp,
     "completed": false
   });
   
@@ -134,13 +134,21 @@ app.post("/:user/todo", function(request, response) {
 });
 
 // update one item
-app.put("/:user/todo/:id", function(request, response){
-  // change todo at index, to the new todo
-  var id = request.params.id;
-  var todo = { "desc": request.body.desc,
-               "completed": JSON.parse(request.body.completed) };
-  todoList[id] = todo;
-  writeFile("data.txt", JSON.stringify(todoList));
+app.put("/:user/todo/:timestamp", function(request, response){
+  var username = request.body.name;
+  var timestamp = request.params.timestamp;
+  var todo = {
+    "name": username,
+    "priority": request.body.priority,
+    "due_date": request.body.due_date,
+    "desc": request.body.desc,
+    "timestamp": timestamp,
+    "completed": false
+  };
+  var userData = getUserData(username);
+  userData.todoList[timestamp] = todo;
+  writeUserData(username, userData);
+  
   response.send({
     todoList: todoList,
     success: true
