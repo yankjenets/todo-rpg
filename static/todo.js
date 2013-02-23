@@ -20,10 +20,10 @@ function addItem(name, desc, priority, due_date) {
     success: function() {
       data.push({
         "name": name,
-        "priority": request.body.priority,
-        "due_date": request.body.due_date,
-        "desc": request.body.desc,
-        "timestamp": request.body.timestamp,
+        "priority": priority,
+        "due_date": due_date,
+        "desc": desc,
+        "timestamp": date,
         "completed": false
       });
     }

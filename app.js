@@ -16,6 +16,7 @@ var MIN_LENGTH = 5;
 
 // The global datastore for user data
 var users;
+var globalData = {};
 
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
@@ -43,17 +44,7 @@ function writeFile(filename, data, callbackFn) {
 }
 
 function getUserData(username) {
-  var defaultList = "[]";
-  var filename = "" + username + ".txt";
-  var userData;
-  readFile(filename, defaultList, function(err, data) {
-    console.log("the data read: " + data);
-    userData = JSON.parse(data);
-    //console.log("The parsed data: " + userData);
-    console.log("The first parsed data: " + userData);
-  });
-  console.log("The second parsed data: " + userData);
-  return userData;
+  return globalData[username];
 }
 
 function writeUserData(username, userData) {
@@ -124,27 +115,10 @@ app.post("/new_user", function(request, response) {
   }
 });
 
-//TODO: deprecated?
-// get a user's data
-app.get("/:user/data", function(request, response){
-  var username = request.params.username;
-  var userData = getUserData(username);
-
-  response.send({
-    userData: userData,
-    success: true
-  });
-});
-
 // create new item
 app.post("/todo", function(request, response) {
-  console.log("START OF POST REQUEST NEW ITEM");
   var username = request.param("user");
   var userData = getUserData(username);
-
-  console.log("username: " + username);
-  console.log("userData: " + userData);
-  
   userData.todoList.push({
     "name": request.body.name,
     "priority": request.body.priority,
@@ -201,12 +175,19 @@ app.get("/static/:staticFilename", function (request, response) {
 
 function initServer() {
   // When we start the server, we must load the stored data
-  var defaultList = "[]";
-  readFile("users.txt", defaultList, function(err, data) {
-    if(data === "[]") {
-      users = {};
-    } else {
-      users = JSON.parse(data);
+  var defaultObj = "{}";
+  readFile("users.txt", defaultObj, function(err, data) {
+    users = JSON.parse(data);
+    var name;
+    for(name in users) {
+      var filename = "" + name + ".txt";
+      //must provide variable scope for callback function
+      (function() {
+        var tempName = name;
+        readFile(filename, defaultObj, function(err, data) {
+          globalData[tempName] = JSON.parse(data);
+        });
+      })();
     }
   });
 }
