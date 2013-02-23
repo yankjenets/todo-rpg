@@ -42,6 +42,7 @@ function writeFile(filename, data, callbackFn) {
 function getUserData(username) {
   var defaultList = "[]";
   var filename = "" + username + ".txt";
+  var userData;
   
   readFile(filename, defaultList, function(err, data) {
     userData = JSON.parse(data);
@@ -55,16 +56,19 @@ function writeUserData(username, userData) {
 }
 
 // login request
-app.get("/login/:user/:pass", function(request, response) {
-  var username = request.params.username;
-  var pass = request.params.pass;
-  var userData = users[username];
-  
-  if (userData !== undefined && userData === pass) {
+app.get("/login", function(request, response) {
+  var username = request.param("user");
+  var pass = request.param("pass");
+  var password = users[username];
+
+  if (password !== undefined && password === pass) {
+    console.log("sending success");
     response.send({
-      success: true
+      success: true,
+      userData: getUserData(username)
     });
   } else {
+    console.log("sending failure");
     response.send({
       success: false
     });
@@ -72,10 +76,12 @@ app.get("/login/:user/:pass", function(request, response) {
 });
 
 // new user request
-app.post("/new_user/:user/:pass", function(request, response) {
-  var username = request.params.username;
-  var pass = request.params.pass;
+app.post("/new_user", function(request, response) {
+  var username = request.param("user");
+  var pass = request.param("pass");
   var data = users[username];
+
+  console.log("creating new user with username: " + username + "\npassword: " + pass);
   
   if (data !== undefined) {
     response.send({
@@ -96,7 +102,8 @@ app.post("/new_user/:user/:pass", function(request, response) {
     writeUserData(username, new_user_data);
     
     response.send({
-      success: true
+      success: true,
+      userData : new_user_data
     });
   }
 });
@@ -175,7 +182,11 @@ function initServer() {
   // When we start the server, we must load the stored data
   var defaultList = "[]";
   readFile("users.txt", defaultList, function(err, data) {
-    users = JSON.parse(data);
+    if(data === "[]") {
+      users = {};
+    } else {
+      users = JSON.parse(data);
+    }
   });
 }
 
