@@ -11,6 +11,9 @@ var fs = require("fs");
 // body of a request
 app.use(express.bodyParser());
 
+//minimum length for a username or password
+var MIN_LENGTH = 5;
+
 // The global datastore for user data
 var users;
 
@@ -43,10 +46,13 @@ function getUserData(username) {
   var defaultList = "[]";
   var filename = "" + username + ".txt";
   var userData;
-  
   readFile(filename, defaultList, function(err, data) {
+    console.log("the data read: " + data);
     userData = JSON.parse(data);
+    //console.log("The parsed data: " + userData);
+    console.log("The first parsed data: " + userData);
   });
+  console.log("The second parsed data: " + userData);
   return userData;
 }
 
@@ -62,13 +68,11 @@ app.get("/login", function(request, response) {
   var password = users[username];
 
   if (password !== undefined && password === pass) {
-    console.log("sending success");
     response.send({
       success: true,
       userData: getUserData(username)
     });
   } else {
-    console.log("sending failure");
     response.send({
       success: false
     });
@@ -79,15 +83,27 @@ app.get("/login", function(request, response) {
 app.post("/new_user", function(request, response) {
   var username = request.param("user");
   var pass = request.param("pass");
-  var data = users[username];
 
-  console.log("creating new user with username: " + username + "\npassword: " + pass);
-  
-  if (data !== undefined) {
+  if(username === undefined || username.length < MIN_LENGTH) {
+    //the username isn't valid
     response.send({
-      success: false
+      success: false,
+      usernameTooShort: true
+    });
+  } else if(pass === undefined || pass.length < MIN_LENGTH) {
+    //the password isn't valid
+    response.send({
+      success: false,
+      passwordTooShort: true
+    });
+  } else if (users[username] !== undefined) {
+    //the username is already taken
+    response.send({
+      success: false,
+      alreadyExists: true
     });
   } else {
+    //we're good! create the new user.
     users[username] = pass;
     writeFile("users.txt", JSON.stringify(users));
     
@@ -108,6 +124,7 @@ app.post("/new_user", function(request, response) {
   }
 });
 
+//TODO: deprecated?
 // get a user's data
 app.get("/:user/data", function(request, response){
   var username = request.params.username;
@@ -120,10 +137,14 @@ app.get("/:user/data", function(request, response){
 });
 
 // create new item
-app.post("/:user/todo", function(request, response) {
-  var username = request.params.username;
+app.post("/todo", function(request, response) {
+  console.log("START OF POST REQUEST NEW ITEM");
+  var username = request.param("user");
   var userData = getUserData(username);
 
+  console.log("username: " + username);
+  console.log("userData: " + userData);
+  
   userData.todoList.push({
     "name": request.body.name,
     "priority": request.body.priority,

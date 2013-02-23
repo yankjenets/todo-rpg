@@ -1,6 +1,37 @@
 var data;
 var user;
 
+//TODO LIST
+
+//adds an item to the todo list
+function addItem(name, desc, priority, due_date) {
+  var date = new Date();
+  $.ajax({
+    type: "post",
+    url: "/todo",
+    data: {
+      user: user,
+      name: name,
+      desc: desc,
+      priority: priority,
+      due_date: due_date,
+      timestamp: date
+    },
+    success: function() {
+      data.push({
+        "name": name,
+        "priority": request.body.priority,
+        "due_date": request.body.due_date,
+        "desc": request.body.desc,
+        "timestamp": request.body.timestamp,
+        "completed": false
+      });
+    }
+  });
+}
+
+//USER FUNCTIONALITY
+
 //attempts to log in and populate user data on success
 function login(username, password) {
   $.ajax({
@@ -9,7 +40,7 @@ function login(username, password) {
     data: {user: username, pass: password},
   	success: function(response) {
       if(response.success) {
-        console.log("success?");
+        console.log("Logged in successfully as " + username + ".");
         user = username;
     	  data = response.userData;
       } else {
@@ -31,7 +62,15 @@ function new_user(username, password) {
         user = username;
         data = response.userData;
       } else {
-        console.log("Sorry, that username already exists");
+        if(response.usernameTooShort) {
+          console.log("Please enter a valid username.");
+        }
+        if(response.passwordTooShort) {
+          console.log("Please enter a valid password.");
+        }
+        if(response.alreadyExists) {
+          console.log("Sorry, that username is already taken.");
+        }
       }
     }
   });
