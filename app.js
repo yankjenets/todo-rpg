@@ -43,15 +43,12 @@ function writeFile(filename, data, callbackFn) {
   });
 }
 
-function getUserData(username) {
-  return globalData[username];
-}
-
 function writeUserData(username, userData) {
   var filename = "" + username + ".txt";
   //easier debugging when stringifying in this manner...maybe change later for "production"
   writeFile(filename, JSON.stringify(userData, null, 2));
 }
+
 
 // login request
 app.get("/login", function(request, response) {
@@ -60,9 +57,11 @@ app.get("/login", function(request, response) {
   var password = users[username];
 
   if (password !== undefined && password === pass) {
+    var userData = globalData[username];
+    userData.last_login = new Date();
     response.send({
       success: true,
-      userData: getUserData(username)
+      userData: userData
     });
   } else {
     response.send({
@@ -106,7 +105,8 @@ app.post("/new_user", function(request, response) {
     new_user_data.total_points = 0;
     new_user_data.last_login = new Date();
     new_user_data.high_score = 0;
-    new_user_data.todoList = [];
+    new_user_data.completed_history = [];
+    new_user_data.todoList = {};
     writeUserData(username, new_user_data);
     globalData[username] = new_user_data;
     
@@ -120,15 +120,16 @@ app.post("/new_user", function(request, response) {
 // create new item
 app.post("/todo", function(request, response) {
   var username = request.param("user");
-  var userData = getUserData(username);
-  userData.todoList.push({
-    "name": request.body.name,
-    "priority": request.body.priority,
-    "due_date": request.body.due_date,
-    "desc": request.body.desc,
-    "timestamp": request.body.timestamp,
-    "completed": false
-  });
+  var userData = globalData[username];
+  userData.todoList[request.body.timestamp] = 
+    {
+      "name": request.body.name,
+      "priority": request.body.priority,
+      "due_date": request.body.due_date,
+      "desc": request.body.desc,
+      "timestamp": request.body.timestamp,
+      "completed": false
+    };
   
   writeUserData(username, userData);
   response.send({
@@ -138,34 +139,101 @@ app.post("/todo", function(request, response) {
 });
 
 // update one item
-app.put("/:user/todo/:timestamp", function(request, response){
-  var username = request.body.name;
-  var timestamp = request.params.timestamp;
-  var todo = {
-    "name": username,
-    "priority": request.body.priority,
-    "due_date": request.body.due_date,
-    "desc": request.body.desc,
-    "timestamp": timestamp,
-    "completed": false
-  };
-  var userData = getUserData(username);
-  userData.todoList[timestamp] = todo;
-  writeUserData(username, userData);
-  
+app.put("/todo", function(request, response){
+  var username = request.param("user");
+  var id = request.param("id");
+  var userData = globalData[username];
+  if(userData.todoList[id] === undefined) {
+    response.send({
+      success: false,
+      doesNotExist: true
+    });
+  } else {
+    userData.todoList[id] = 
+      {
+        "name": request.body.name,
+        "priority": request.body.priority,
+        "due_date": request.body.due_date,
+        "desc": request.body.desc,
+        "timestamp": id,
+        "completed": request.body.completed
+      };
+    
+    writeUserData(username, userData);
+    response.send({
+      userData: userData,
+      success: true
+    });
+  }
+});
+
+// complete an item
+app.post("/todo/complete", function(request, response) {
+  var username = request.param("user");
+  var id = request.param("id");
+  var completionDate = request.param("completionDate");
+  var points = request.param("points");
+  var userData = globalData[username];
+  if(userData.todoList[id] === undefined) {
+    response.send({
+      success: false,
+      doesNotExist: true
+    });
+  } else {
+    userData.todoList[id].completed = true;
+    userData.completed_history.push([completionDate, points]);
+    response.send({
+      success: true
+    });
+  }
+});
+
+// clean out last 24 hours list
+app.delete("/todo/completed_history", function(request, response) {
+  var username = request.param("user");
+  var numToDelete = request.param("numToDelete");
+  var userData = globalData[username];
+  if(userData.completed_history === undefined ||
+     userData.completed_history.length < numToDelete) {
+    response.send({
+      success: false,
+      doesNotExist: true
+    });
+  } else {
+    for(i = 0; i < numToDelete; i++) {
+      // delete the first numToDelete entries in the list
+      userData.completed_history.splice(0, 1);
+    }
+  }
+});
+
+// delete one list item
+app.delete("/todo", function(request, response){
+  var username = request.param("user");
+  var id = request.param("id");
+  var userData = globalData[username];
+  delete userData.todoList[id];
+  var filename = "" + username + ".txt";
+  writeFile(filename, JSON.stringify(userData, null, 2));
   response.send({
-    todoList: todoList,
+    todoList: userData.todoList,
     success: true
   });
 });
 
-// delete one item
-app.delete("/:user/todo/:id", function(request, response){
-  var id = request.params.id;
-  todoList.splice(id, 1);
-  writeFile("data.txt", JSON.stringify(todoList, null, 2));
+//update user stats
+app.put("/profile", function(request, response){
+  var username = request.body.user;
+  var userData = globalData[username];
+  if(userData !== undefined) {
+    userData.level = request.body.level;
+    userData.powerups = request.body.powerups;
+    userData.total_points = request.body.total_points;
+    userData.high_score = request.body.high_score;
+  }
+  writeUserData(username, userData);
   response.send({
-    todoList: todoList,
+    userData: userData,
     success: true
   });
 });
