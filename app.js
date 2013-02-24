@@ -1,4 +1,3 @@
-// super-todo version of simpleExpressServer.js
 // A simple RESTful Express server for 15-237.
 
 var express = require("express"); // imports express
