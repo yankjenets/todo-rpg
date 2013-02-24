@@ -1,4 +1,3 @@
-// super-todo version of simpleExpressServer.js
 // A simple RESTful Express server for 15-237.
 
 var express = require("express"); // imports express
@@ -118,15 +117,15 @@ app.post("/new_user", function(request, response) {
 // create new item
 app.post("/todo", function(request, response) {
   var username = request.param("user");
+  var timestamp = request.param("timestamp")
   var userData = getUserData(username);
-  userData.todoList.push({
-    "name": request.body.name,
-    "priority": request.body.priority,
-    "due_date": request.body.due_date,
-    "desc": request.body.desc,
-    "timestamp": request.body.timestamp,
+  userData.todoList[timestamp] = {
+    "name": username,
+    "priority": request.param("priority"),
+    "due_date": request.param("due_date"),
+    "desc": request.param("desc"),
     "completed": false
-  });
+  };
   
   writeUserData(username, userData);
   response.send({
@@ -137,14 +136,13 @@ app.post("/todo", function(request, response) {
 
 // update one item
 app.put("/:user/todo/:timestamp", function(request, response){
-  var username = request.body.name;
-  var timestamp = request.params.timestamp;
+  var username = request.param("user");
+  var timestamp = request.param("timestamp");
   var todo = {
     "name": username,
-    "priority": request.body.priority,
-    "due_date": request.body.due_date,
-    "desc": request.body.desc,
-    "timestamp": timestamp,
+    "priority": request.param("priority"),
+    "due_date": request.param("due_date"),
+    "desc": request.param("desc"),
     "completed": false
   };
   var userData = getUserData(username);
@@ -159,9 +157,12 @@ app.put("/:user/todo/:timestamp", function(request, response){
 
 // delete one item
 app.delete("/:user/todo/:id", function(request, response){
-  var id = request.params.id;
-  todoList.splice(id, 1);
-  writeFile("data.txt", JSON.stringify(todoList));
+  var username = request.param("user");
+  var timestamp = request.param("timestamp");
+  var userData = getUserData(username);
+  
+  userData.todoList.splice(timestamp, 1);
+  writeUserData(username, userData);
   response.send({
     todoList: todoList,
     success: true

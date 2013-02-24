@@ -1,4 +1,4 @@
-var data;
+var data = [];
 var user;
 
 //TODO LIST
@@ -18,14 +18,13 @@ function addItem(name, desc, priority, due_date) {
       timestamp: date
     },
     success: function() {
-      data.push({
+      data[date] = {
         "name": name,
         "priority": priority,
         "due_date": due_date,
         "desc": desc,
-        "timestamp": date,
         "completed": false
-      });
+      };
     }
   });
 }
