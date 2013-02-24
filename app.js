@@ -49,7 +49,8 @@ function getUserData(username) {
 
 function writeUserData(username, userData) {
   var filename = "" + username + ".txt";
-  writeFile(filename, JSON.stringify(userData));
+  //easier debugging when stringifying in this manner...maybe change later for "production"
+  writeFile(filename, JSON.stringify(userData, null, 2));
 }
 
 // login request
@@ -107,6 +108,7 @@ app.post("/new_user", function(request, response) {
     new_user_data.high_score = 0;
     new_user_data.todoList = [];
     writeUserData(username, new_user_data);
+    globalData[username] = new_user_data;
     
     response.send({
       success: true,
@@ -161,7 +163,7 @@ app.put("/:user/todo/:timestamp", function(request, response){
 app.delete("/:user/todo/:id", function(request, response){
   var id = request.params.id;
   todoList.splice(id, 1);
-  writeFile("data.txt", JSON.stringify(todoList));
+  writeFile("data.txt", JSON.stringify(todoList, null, 2));
   response.send({
     todoList: todoList,
     success: true
