@@ -1,0 +1,103 @@
+/* CSS for RPG.TODO
+ * Michael Hankowsky, Tyler Healy, Double D
+ * All Rights Reserved - Sorry
+ */
+
+
+body {
+  background-color: #F2F2F2;
+  font-family: 'Raleway', sans-serif;
+}
+
+
+.wrapper {
+  width: 600px;
+  margin: 10px auto 0;
+}
+
+.blue {
+  color: #208AE3;
+}
+
+/***********************
+ * Header Styles *
+ * *********************/
+
+.header{
+  margin-top: 25px;
+  border-bottom-style: solid;
+  border-width:1px;
+  margin-bottom: 30px;
+}
+
+h1 {
+  margin: 0 0 0 0;
+  display:inline;
+  position: relative;
+
+  font-family: 'Exo', sans-serif;
+  font-weight: bold;
+  font-size: 60px;
+  text-shadow: 1px 1px 1px #822;
+}
+
+.header h3{
+  display:inline;
+  margin:0 5px 0 0;
+
+  font-size:20px;
+  font-weight: bold;
+}
+
+.header h6{
+  position:relative;
+  left: 420px;
+  font-size:12px;
+}
+
+.points {
+  display:inline;
+  margin-left: 20%;
+
+}
+
+/*************
+ * Input box *
+ *************/
+
+.input label{
+  display: inline;
+  font-size: 18px;
+  margin: 0 10px 15px 0;
+  color: #555;
+}
+
+select{
+  padding: 5px;
+  margin-right:10px;
+  font-size: 18px;
+}
+
+form {
+  margin-bottom: 30px;
+}
+
+input {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #CCC;
+  box-shadow: 1px 1px 1px #FAFAFA;
+  background-color: #FFF;
+  margin-bottom:20px;
+
+  font-size: 20px;
+  color: #555;
+}
+
+#task{
+  width:322px;
+}
+
+canvas{
+  margin-bottom: 25px;
+}
