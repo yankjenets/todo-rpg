@@ -155,7 +155,8 @@ function userLoginDOM() {
   var password = $("#pass").val();
 
   var success = login(username, password);
-
+  console.log(success);
+  
   //don't clear username box if incorrect password was entered
   if(success) {
     $("#username").val("");
@@ -167,10 +168,7 @@ function userRegisterDOM() {
   var username = $("#username").val();
   var password = $("#pass").val();
 
-  var reg_works = new_user(username, password);
-  if (reg_works) {
-    login(username, password);
-  }
+  regworks = new_user(username, password);
 
   $("#username").val("");
   $("#pass").val("");
@@ -274,12 +272,11 @@ function refreshDOM() {
 
   }
 
-    //Points and level
-    $("#level").html(data.level);
-    $("#points").html(data.total_points);
+  //Points and level
+  $("#level").html(data.level);
+  $("#points").html(data.total_points);
 
-    $("#taskInputError").html("");
-  
+  $("#taskInputError").html("");
 }
 
 function completeClick(date) {
@@ -552,7 +549,7 @@ function new_user(username, password) {
         $(".login").addClass("clear");
         user = username;
         data = response.userData;
-        return true;
+        login(username, password);
       } else {
         if(response.usernameTooShort) {
           $("#loginError").html("Please enter a valid username.(Username > 5 chars)");
@@ -563,7 +560,6 @@ function new_user(username, password) {
         if(response.alreadyExists) {
           $("#loginError").html("Sorry, that username is already taken.");
         }
-        return false;
       }
     }
   });
