@@ -127,7 +127,7 @@ app.post("/todo", function(request, response) {
   var taskname = request.body.name;
   var priority = request.body.priority;
   var due_date = request.body.due_date;
-  var timestamp = new Date(request.body.timestamp.toString());
+  var timestamp = new Date(request.body.timestamp);
   
   if (username != undefined &&
        taskname != undefined &&
