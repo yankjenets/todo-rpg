@@ -23,12 +23,6 @@ var MILLI_IN_24_HOURS = MILLI_IN_HOUR * 24;
 
 var POINTS_PER_LEVEL = 50;
 
-var PRIORITY_ENUM = {
-  LOW : {value : 1, name : "low"},
-  MEDIUM : {value : 4, name : "medium"},
-  HIGH : {value : 9, name : "high"}
-};
-
 /*****************
  * Canvas Controls
  *****************/
@@ -107,7 +101,7 @@ function drawWelcome() {
   ctx.textAlign = "start";
 
   if(welMSG.y < 70){
-  welMSG.y= welMSG.y+welMSG.speed;
+    welMSG.y= welMSG.y+welMSG.speed;
   }
 
   ctx.fillText(welMSG.txt, welMSG.x, welMSG.y);
@@ -154,6 +148,7 @@ function userRegisterDOM() {
   var password = $("#pass").val();
 
   new_user(username, password);
+  login(username, password);
 
   $("#username").val("");
   $("#pass").val("");
@@ -180,9 +175,9 @@ function addItemDOM() {
     return;
   }
 
-  var dateObject = new Date(splitDate[0], splitDate[1], splitDate[2], hour, minute, 0, 0);
+  var dateObject = new Date(splitDate[0], splitDate[1] - 1, splitDate[2], hour, minute, 0, 0);
 
-  addItem(title, priority, dateObject);
+  addItem(title, priority, dateObject.getTime());
 
   $("#task-input").val("");
   $("#priority-input").val("");
@@ -198,11 +193,24 @@ function refreshDOM() {
 
     //Create smaller components
     var title = $("<h3>").text(data.todoList[item].name);
-    var priority = $("<h4>").text(data.todoList[item].priority);
-    if(data.todoList[item].priority === "high"){
+    var priorityValue = parseInt(data.todoList[item].priority);
+    var priority;
+    switch(priorityValue) {
+      case 0: 
+        priority = $("<h4>").text("Low");
+        break;
+      case 1: 
+        priority = $("<h4>").text("Medium");
+        break;
+      case 2: 
+        priority = $("<h4>").text("High");
+        break;
+
+    }
+    if(priorityValue === 2){
       priority.addClass("red");
     }
-    var dateobj = new Date(data.todoList[item].due_date);
+    var dateobj = new Date(parseInt(data.todoList[item].due_date));
     var duedate = $("<h4>").text("Due:"+dateobj.toLocaleDateString()+ " " + dateobj.toLocaleTimeString()); 
 
     var div = $("<div>");
@@ -218,7 +226,7 @@ function refreshDOM() {
 
     finished.attr('id', dateObject.getTime());
     finished.click(function() {
-          completeTask(dateObject.getTime());
+      completeTask(dateObject.getTime());
     });
 
     deleteBut.attr('id', dateObject.getTime());
@@ -277,9 +285,12 @@ function runCanvas() {
 
 //returns the priority multiplier times the number of hours ahead of due date you finished the task.
 function calculateScore(task, time) {
-  var timeBeforeDue = task.due_date - time;
-  console.log(task);
-  return Math.floor(task.priority.value * timeBeforeDue / MILLI_IN_HOUR) + 1;
+  console.log("INSIDE CALCULATE SCORE");
+  console.log("DUE DATE: " + task.due_date);
+  var timeBeforeDue = new Date(parseInt(task.due_date)) - time;
+  console.log("TIME BEFORE DUE: " + timeBeforeDue);
+
+  return Math.floor(Math.pow((parseInt(task.priority) + 1), 2) * timeBeforeDue / MILLI_IN_HOUR) + 1;
 }
 
 function updateTotalPoints(score) {
@@ -329,19 +340,9 @@ function updateHighScore(time_period) {
 }
 
 function completeTask(id) {
-
-  //TODO: FOR DEBUGGING ONLY DELETE LATER!!!
-  if(id == -1) {
-    var x;
-    for(x in data.todoList) {
-      id = x;
-    }
-  }
-
-  var currTime = new Date();
-  var task = data.todoList[id];
-  var score = calculateScore(task, currTime);
   var completionDate = new Date();
+  var task = data.todoList[id];
+  var score = calculateScore(task, completionDate);
 
   if(task.completed) {
     console.log("Error: task is already completed.");
@@ -424,7 +425,7 @@ function addItem(name, priority, due_date) {
       user: user,
       name: name,
       priority: priority,
-      due_date: due_date,
+      due_date: due_date.toString(),
       timestamp: date
     },
     success: function() {
@@ -472,7 +473,7 @@ function editItem(date, name, priority, due_date, completed) {
           {
             "name": name,
             "priority": priority,
-            "due_date": due_date,
+            "due_date": due_date.toString(),
             "timestamp": date,
             "completed": completed
           };
@@ -496,9 +497,9 @@ function login(username, password) {
         console.log("Logged in successfully as " + username + ".");
         $(".login").addClass("clear");
         user = username;
-    	data = response.userData;
-    	console.log(data);
-      refreshDOM();
+      	data = response.userData;
+      	console.log(data);
+        refreshDOM();
       } else {
         $("#loginError").html("incorrect password");
       }
