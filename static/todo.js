@@ -42,7 +42,43 @@ function refreshDOM() {
     }
     var todo = $("<li>", todoAttributes);
     $(".todo").append(todo);
+/*
 
+      var deleteAttributes = {
+        "href" : "#",
+        "onclick" : "delRefresh(" + i + ")"
+      };
+      var deleteButton = $("<a>", deleteAttributes).text("Delete");
+
+      var soldAttributes = {
+        "href" : "#",
+        "onclick" : "sold(" + i + ")"
+      };
+      var soldButton = $("<a>", soldAttributes).text("Sold!");
+
+      var authorObject = $("<h3>").text(listings[i].author);
+      var dateObject = $("<h6>").text(listings[i].date);
+      var descObject = $("<p>").text(listings[i].desc);
+      var priceObject = $("<p>").text("$" + listings[i].price);
+
+      var soldClass = "notSold";
+      if(listings[i].sold) {
+        soldClass = "sold";
+      }
+      var listingAttributes = {
+        //"id" : listings[i].date.toString().replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, ''),
+        "class" : soldClass
+      }
+      var listing = $("<li>", listingAttributes);
+      authorObject.appendTo(listing);
+      dateObject.appendTo(listing);
+      descObject.appendTo(listing);
+      priceObject.appendTo(listing);
+      deleteButton.appendTo(listing);
+      soldButton.appendTo(listing);
+
+      $(".listings").append(listing);
+    }*/
   }
 }
 
