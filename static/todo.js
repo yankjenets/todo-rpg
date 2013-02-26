@@ -47,8 +47,25 @@ function addItemDOM() {
   var title = $("#task-input").val();
   var priority = $("#priority-input").val();
   var date = $("#date-input").val();
+  var hour = parseInt($("#hour-input").val());
+  var minute = parseInt($("#minute-input").val());
+  var time_parity = parseInt($("#time-parity-input").val());
+  if(!(1 <= hour && hour <= 12) || !(0 <= minute && minute <= 59)) {
+    hour = 24;
+    minute = 0;
+    console.log("Defaulting to midnight since a valid time was not entered.");
+  } else {
+    hour += time_parity;
+  }
+  var splitDate = date.split("-");
+  if(splitDate.length != 3) {
+    console.log("Please enter a valid date.");
+    return;
+  }
 
-  addItem(title, priority, date);
+  var dateObject = new Date(splitDate[0], splitDate[1], splitDate[2], hour, minute, 0, 0);
+
+  addItem(title, priority, dateObject);
 
   $("#task-input").val("");
   $("#priority-input").val("");
