@@ -137,9 +137,12 @@ function userLoginDOM() {
   var username = $("#username").val();
   var password = $("#pass").val();
 
-  login(username, password);
+  var success = login(username, password);
 
-  $("#username").val("");
+  //don't clear username box if incorrect password was entered
+  if(success) {
+    $("#username").val("");
+  }
   $("#pass").val("");
 }
 
@@ -182,6 +185,9 @@ function addItemDOM() {
   $("#task-input").val("");
   $("#priority-input").val("");
   $("#date-input").val("");
+  $("#hour-input").val("");
+  $("#minute-input").val("");
+  $("#time-parity-input").val("");
   refreshDOM();
 }
 
@@ -285,11 +291,7 @@ function runCanvas() {
 
 //returns the priority multiplier times the number of hours ahead of due date you finished the task.
 function calculateScore(task, time) {
-  console.log("INSIDE CALCULATE SCORE");
-  console.log("DUE DATE: " + task.due_date);
   var timeBeforeDue = new Date(parseInt(task.due_date)) - time;
-  console.log("TIME BEFORE DUE: " + timeBeforeDue);
-
   return Math.floor(Math.pow((parseInt(task.priority) + 1), 2) * timeBeforeDue / MILLI_IN_HOUR) + 1;
 }
 
@@ -348,9 +350,6 @@ function completeTask(id) {
     console.log("Error: task is already completed.");
     return;
   }
-  
-  console.log("TASK: " + JSON.stringify(task, null, 4));
-  console.log("SCORE: " + score);
 
   $.ajax({
     type: "post",
@@ -366,9 +365,7 @@ function completeTask(id) {
         console.log("does not exist");
       } else {
         task.completed = true;
-        console.log("PREVIOUS total points: " + data.total_points);
         updateTotalPoints(score);
-        console.log("NEW total points: " + data.total_points);
         updateLevel();
         console.log("COMPLETED LAST 24 before: " + JSON.stringify(data.completed_history, null, 4));
         data.completed_history.push([completionDate, score]);
@@ -498,13 +495,15 @@ function login(username, password) {
         $(".login").addClass("clear");
         user = username;
       	data = response.userData;
-      	console.log(data);
         refreshDOM();
+        return true;
       } else {
         $("#loginError").html("incorrect password");
+        return false;
       }
   	}
   });
+  return false;
 }
 
 //create a new user
