@@ -234,7 +234,7 @@ app.delete("/todo/completed_history", function(request, response) {
   
   if (username != undefined && numToDelete != undefined) {
     var userData = localData[username];
-    if(userDate === undefined ||
+    if(userData === undefined ||
        userData.completed_history === undefined ||
        userData.completed_history.length < numToDelete) {
       response.send({
