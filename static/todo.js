@@ -248,7 +248,8 @@ function login(username, password) {
       if(response.success) {
         console.log("Logged in successfully as " + username + ".");
         user = username;
-    	  data = response.userData;
+    	data = response.userData;
+    	console.log(data);
       } else {
         console.log("incorrect password");
       }

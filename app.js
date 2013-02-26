@@ -15,7 +15,8 @@ var MIN_LENGTH = 5;
 
 // The global datastore for user data
 var users;
-var globalData = {};
+var curUser = null;
+var localData = {};
 
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
@@ -48,7 +49,6 @@ function writeUserData(username, userData) {
   writeFile(filename, JSON.stringify(userData, null, 2));
 }
 
-
 // login request
 app.get("/login", function(request, response) {
   var username = request.param("user");
@@ -56,11 +56,19 @@ app.get("/login", function(request, response) {
   var password = users[username];
 
   if (password !== undefined && password === pass) {
-    var userData = globalData[username];
-    userData.last_login = new Date();
+    var defaultList = "[]";
+    var filename = "" + username + ".txt";
+    var userData;
+  
+    readFile(filename, defaultList, function(err, data) {
+      localData[username] = JSON.parse(data);
+      localData[username].last_login = new Date();
+      writeUserData(username, userData);
+    });
+  
     response.send({
       success: true,
-      userData: userData
+      userData: localData[username]
     });
   } else {
     response.send({
@@ -107,7 +115,6 @@ app.post("/new_user", function(request, response) {
     new_user_data.completed_history = [];
     new_user_data.todoList = {};
     writeUserData(username, new_user_data);
-    globalData[username] = new_user_data;
     
     response.send({
       success: true,
@@ -118,9 +125,8 @@ app.post("/new_user", function(request, response) {
 
 // create new item
 app.post("/todo", function(request, response) {
-  var username = request.param("user");
-  var userData = globalData[username];
-  userData.todoList[request.body.timestamp] = 
+  var username = request.param("id");
+  localData[username].todoList[request.body.timestamp.getTime()] = 
     {
       "name": request.body.name,
       "priority": request.body.priority,
@@ -130,7 +136,7 @@ app.post("/todo", function(request, response) {
       "completed": false
     };
   
-  writeUserData(username, userData);
+  writeUserData(username, localData[username]);
   response.send({
     userData: userData,
     success: true
@@ -139,16 +145,15 @@ app.post("/todo", function(request, response) {
 
 // update one item
 app.put("/todo", function(request, response){
-  var username = request.param("user");
+  var username = request.param("id");
   var id = request.param("id");
-  var userData = globalData[username];
-  if(userData.todoList[id] === undefined) {
+  if(localData[username].todoList[id] === undefined) {
     response.send({
       success: false,
       doesNotExist: true
     });
   } else {
-    userData.todoList[id] = 
+    localData.todoList[id] = 
       {
         "name": request.body.name,
         "priority": request.body.priority,
@@ -172,7 +177,7 @@ app.post("/todo/complete", function(request, response) {
   var id = request.param("id");
   var completionDate = request.param("completionDate");
   var points = request.param("points");
-  var userData = globalData[username];
+  var userData = localData[username];
   if(userData.todoList[id] === undefined) {
     response.send({
       success: false,
@@ -181,6 +186,7 @@ app.post("/todo/complete", function(request, response) {
   } else {
     userData.todoList[id].completed = true;
     userData.completed_history.push([completionDate, points]);
+    writeUserData(username, userData);
     response.send({
       success: true
     });
@@ -191,7 +197,7 @@ app.post("/todo/complete", function(request, response) {
 app.delete("/todo/completed_history", function(request, response) {
   var username = request.param("user");
   var numToDelete = request.param("numToDelete");
-  var userData = globalData[username];
+  var userData = localData[username];
   if(userData.completed_history === undefined ||
      userData.completed_history.length < numToDelete) {
     response.send({
@@ -202,6 +208,10 @@ app.delete("/todo/completed_history", function(request, response) {
     for(i = 0; i < numToDelete; i++) {
       // delete the first numToDelete entries in the list
       userData.completed_history.splice(0, 1);
+      writeUserData(username, userData);
+      response.send({
+        success: true
+      });
     }
   }
 });
@@ -210,10 +220,9 @@ app.delete("/todo/completed_history", function(request, response) {
 app.delete("/todo", function(request, response){
   var username = request.param("user");
   var id = request.param("id");
-  var userData = globalData[username];
+  var userData = localData[username];
   delete userData.todoList[id];
-  var filename = "" + username + ".txt";
-  writeFile(filename, JSON.stringify(userData, null, 2));
+  writeUserData(username, userData);
   response.send({
     todoList: userData.todoList,
     success: true
@@ -223,18 +232,23 @@ app.delete("/todo", function(request, response){
 //update user stats
 app.put("/profile", function(request, response){
   var username = request.body.user;
-  var userData = globalData[username];
+  var userData = localData[username];
   if(userData !== undefined) {
     userData.level = request.body.level;
     userData.powerups = request.body.powerups;
     userData.total_points = request.body.total_points;
     userData.high_score = request.body.high_score;
+    
+    writeUserData(username, userData);
+    response.send({
+      userData: userData,
+      success: true
+    });
+  } else {
+    response.send({
+      success: false
+    });
   }
-  writeUserData(username, userData);
-  response.send({
-    userData: userData,
-    success: true
-  });
 });
 
 // This is for serving files in the static directory
@@ -247,17 +261,6 @@ function initServer() {
   var defaultObj = "{}";
   readFile("users.txt", defaultObj, function(err, data) {
     users = JSON.parse(data);
-    var name;
-    for(name in users) {
-      var filename = "" + name + ".txt";
-      //must provide variable scope for callback function
-      (function() {
-        var tempName = name;
-        readFile(filename, defaultObj, function(err, data) {
-          globalData[tempName] = JSON.parse(data);
-        });
-      })();
-    }
   });
 }
 
