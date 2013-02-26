@@ -178,8 +178,10 @@ function userRegisterDOM() {
   var username = $("#username").val();
   var password = $("#pass").val();
 
-  new_user(username, password);
-  login(username, password);
+  var reg_works = new_user(username, password);
+  if (reg_works) {
+    login(username, password);
+  }
 
   $("#username").val("");
   $("#pass").val("");
@@ -561,6 +563,7 @@ function new_user(username, password) {
         $(".login").addClass("clear");
         user = username;
         data = response.userData;
+        return true;
       } else {
         if(response.usernameTooShort) {
           $("#loginError").html("Please enter a valid username.(Username > 5 chars)");
@@ -571,6 +574,7 @@ function new_user(username, password) {
         if(response.alreadyExists) {
           $("#loginError").html("Sorry, that username is already taken.");
         }
+        return false;
       }
     }
   });
