@@ -63,6 +63,7 @@ var nhsMSG = new DynamicText("NEW HIGH SCORE",0,40,1);
 var modivation = new DynamicText("Carpe Diem"
     ,40,100,1);
 var taskMSG = new DynamicText("task", 0, 0, .3);
+var scoreMSG = new DynamicText("score", 300, 30, 0);
 
 function drawTime(){
   var date = new Date();
@@ -77,8 +78,28 @@ function drawTime(){
 
 }
 
+function setCanvasScore(score){
+  scrMSG = score+"points added!!";
+  canvasState = TASKCOMPLETE;
+}
+
+function drawTaskComplete(){
+  ctx.fillStyle = "#555";
+  ctx.font = "bold 40px Nuntio";
+  ctx.textAlign = "start";
+
+  if(scoreMSG.speed < 40){
+   if(scoreMSG % 1){
+    ctx.fillText(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
+   }
+  }else{
+  ctx.fillText(taskMSG.txt, taskMSG.x, taskMSG.y);
+  }
+  drawTime();
+}
+
 function setTaskToDraw(task) {
-  taskMSG.txt = task;
+  taskMSG.txt = task +" Added.";
   canvasState = TASKADDED;
 }
 
@@ -390,6 +411,7 @@ function completeTask(id) {
         console.log("AFTER HIGH SCORE: " + data.high_score);
         updateUser();
         refreshDOM();
+        setCanvasScore(score);
       }
     },
     error: function(response) {
