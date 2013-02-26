@@ -5,6 +5,9 @@ var user;
 var canvas;
 var ctx;
 
+var WELCOME=1;
+var TASKADDED = 2;
+var TASKCOMPLETE = 3; 
 
 var canvasState = WELCOME;
 
@@ -32,7 +35,12 @@ $(document).ready(function(){
   canvas = document.getElementById("myCanvas");
   ctx = canvas.getContext("2d");
   runCanvas();
-  $("#submitTask").click(addItemDOM());
+
+  $("#submitTask").click(function() {
+    console.log("wtf");
+    addItemDOM();
+  });
+  //$("#submitTask").click(addItemDOM());
 });
 
 //DOM STUFF
@@ -99,7 +107,11 @@ function refreshDOM() {
   }
 }
 
-function onTimer(){
+function drawWelcome() {
+
+}
+
+function onTimer() {
   switch(canvasState){
     case WELCOME:
       drawWelcome();
@@ -113,7 +125,7 @@ function onTimer(){
   }
 }
 
-function runCanvas(){
+function runCanvas() {
   intervalID = setInterval(onTimer, TIMER_DELAY);
 }
 
