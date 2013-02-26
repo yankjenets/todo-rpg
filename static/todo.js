@@ -294,7 +294,7 @@ function calculateScore(task, time) {
 }
 
 function updateTotalPoints(score) {
-  data.total_points += score;
+  data.total_points = parseInt(data.total_points) + parseInt(score);
 }
 
 function updateLevel() {
