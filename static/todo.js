@@ -91,11 +91,16 @@ function drawTaskComplete(){
   if(scoreMSG.speed < 40){
    if(scoreMSG % 1){
     ctx.fillText(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
+    scoreMSG++;
    }
+    else{
+      scoreMSG++;
+    }
   }else{
   ctx.fillText(taskMSG.txt, taskMSG.x, taskMSG.y);
   }
   drawTime();
+
 }
 
 function setTaskToDraw(task) {
@@ -286,6 +291,7 @@ function refreshDOM() {
 function completeClick(date) {
   return function() {
     completeTask(date);
+    $(this).addClass("clear");
     refreshDOM();
   }
 }
