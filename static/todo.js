@@ -275,7 +275,7 @@ function addItem(name, desc, priority, due_date) {
       timestamp: date
     },
     success: function() {
-      data.todoList[date] =
+      data.todoList[date.getTime()] =
         {
           "name": name,
           "priority": priority,
@@ -298,19 +298,19 @@ function deleteItem(date) {
       id: date
     },
     success: function() {
-      delete data.todoList[date];
+      delete data.todoList[date.getTime()];
     }
   });
 }
 
 //edit an item from the todo list
-function editItem(id, name, desc, priority, due_date, completed) {
+function editItem(date, name, desc, priority, due_date, completed) {
   $.ajax({
     type: "put",
     url: "/todo",
     data: {
       user: user,
-      id: id,
+      id: date,
       name: name,
       desc: desc,
       priority: priority,
@@ -319,13 +319,13 @@ function editItem(id, name, desc, priority, due_date, completed) {
     },
     success: function(response) {
       if(response.success) {
-        data.todoList[id] =
+        data.todoList[date.getTime()] =
           {
             "name": name,
             "priority": priority,
             "due_date": due_date,
             "desc": desc,
-            "timestamp": id ,
+            "timestamp": date,
             "completed": completed
           };
       } else {

@@ -62,11 +62,11 @@ app.get("/login", function(request, response) {
       localData[username] = JSON.parse(data);
       localData[username].last_login = new Date();
       writeUserData(username, localData[username]);
-    });
-  
-    response.send({
-      success: true,
-      userData: localData[username]
+      
+      response.send({
+        success: true,
+        userData: localData[username]
+      });
     });
   } else {
     response.send({
@@ -127,7 +127,7 @@ app.post("/todo", function(request, response) {
   var taskname = request.body.name;
   var priority = request.body.priority;
   var due_date = request.body.due_date;
-  var timestamp = request.body.timestamp;
+  var timestamp = new Date(request.body.timestamp.toString());
   
   if (username != undefined &&
        taskname != undefined &&
@@ -145,7 +145,7 @@ app.post("/todo", function(request, response) {
   
     writeUserData(username, localData[username]);
     response.send({
-      userData: userData,
+      userData: localData[username],
       success: true
     });
   } else {
