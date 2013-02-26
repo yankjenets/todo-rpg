@@ -42,15 +42,16 @@
 
       <form class="input">
         <label class="block">Enter what you want to do:</label>
-        <input id="task" name="task" placeholder="Title"/>
+        <input id="task-input" name="task" placeholder="Title"/>
         <div>
-          <label>Priority:</label><select name="priority">
+          <label>Priority:</label><select id="priority-input" name="priority">
             <option value="low">Low</option>
             <option value="med">Medium</option>
             <option value="high">High</option>
           </select>
           <label>Due Date:</label>
-          <input type="date" name "duedate">
+
+          <input type="date" id="date-input" name "duedate">
           <div>
             <label>Time Due:</label>
             <input class=time>:<input class=time> <select name=ampm>
@@ -59,7 +60,7 @@
             </select>
 
           </div> 
-          <a class="submit button">Submit</a>
+          <a id="submitTask" class="submit button">Submit</a>
         </div>
       </form>
 

@@ -37,6 +37,7 @@ $(document).ready(function(){
   canvas = document.getElementById("myCanvas");
   ctx = canvas.getContext("2d");
 
+
   runCanvas();
 });
 
@@ -102,8 +103,96 @@ function drawNewHighScore(){
 
   ctx.fillText(modivation.txt, modivation.x, modivation.y);
   drawTime();
-
 }
+
+
+  $("#submitTask").click(function() {
+    addItemDOM();
+  });
+
+//DOM STUFF
+
+function addItemDOM() {
+  var title = $("#task-input").val();
+  var priority = $("#priority-input").val();
+  var date = $("#date-input").val();
+
+  addItem(title, priority, date);
+
+  $("#task-input").val("");
+  $("#priority-input").val("");
+  $("#date-input").val("");
+  refreshDOM();
+}
+
+function refreshDOM() {
+  $(".todo").html("");
+  var item;
+  for(item in data.todoList) {
+
+    var descriptionObject = $("<p>").text(data.todoList[item].name);
+    var todoAttributes = {
+      "class": "task"
+    }
+    var todo = $("<li>", todoAttributes);
+
+    todo.append(descriptionObject);
+    $(".todo").append(todo);
+/*
+    <li id="01" class="task">
+          <h3>Description</h3>
+          <h4 class="red">High</h4>
+          <h4>Due: 2/12/13</h4>
+          <div>
+            <h6>Points if Completed today:</h6>
+            <h6 class="tskPoints">120</h6>
+          </div>
+          <p> This is the Long Description......</p>
+
+          <a id="01" class="complete">Finished!</a>
+        </li>
+*/
+
+/*
+
+      var deleteAttributes = {
+        "href" : "#",
+        "onclick" : "delRefresh(" + i + ")"
+      };
+      var deleteButton = $("<a>", deleteAttributes).text("Delete");
+
+      var soldAttributes = {
+        "href" : "#",
+        "onclick" : "sold(" + i + ")"
+      };
+      var soldButton = $("<a>", soldAttributes).text("Sold!");
+
+      var authorObject = $("<h3>").text(listings[i].author);
+      var dateObject = $("<h6>").text(listings[i].date);
+      var descObject = $("<p>").text(listings[i].desc);
+      var priceObject = $("<p>").text("$" + listings[i].price);
+
+      var soldClass = "notSold";
+      if(listings[i].sold) {
+        soldClass = "sold";
+      }
+      var listingAttributes = {
+        //"id" : listings[i].date.toString().replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, ''),
+        "class" : soldClass
+      }
+      var listing = $("<li>", listingAttributes);
+      authorObject.appendTo(listing);
+      dateObject.appendTo(listing);
+      descObject.appendTo(listing);
+      priceObject.appendTo(listing);
+      deleteButton.appendTo(listing);
+      soldButton.appendTo(listing);
+
+      $(".listings").append(listing);
+    }*/
+  }
+}
+
 
 function onTimer() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -259,29 +348,33 @@ function updateUser() {
 }
 
 //adds an item to the todo list
-function addItem(name, desc, priority, due_date) {
+function addItem(name, priority, due_date) {
   var date = new Date();
+  data.todoList[date.getTime()] =
+    {
+      "name": name,
+      "priority": priority,
+      "due_date": due_date,
+      "timestamp": date,
+      "completed": false
+    };
+
   $.ajax({
     type: "post",
     url: "/todo",
     data: {
       user: user,
       name: name,
-      desc: desc,
       priority: priority,
       due_date: due_date,
       timestamp: date
     },
     success: function() {
-      data.todoList[date] =
-        {
-          "name": name,
-          "priority": priority,
-          "due_date": due_date,
-          "desc": desc,
-          "timestamp": date,
-          "completed": false
-        };
+    
+    },
+    failure: function() {
+      delete data.todoList[date.getTime()];
+      refreshDOM();
     }
   });
 }
@@ -296,34 +389,32 @@ function deleteItem(date) {
       id: date
     },
     success: function() {
-      delete data.todoList[date];
+      delete data.todoList[date.getTime()];
     }
   });
 }
 
 //edit an item from the todo list
-function editItem(id, name, desc, priority, due_date, completed) {
+function editItem(date, name, priority, due_date, completed) {
   $.ajax({
     type: "put",
     url: "/todo",
     data: {
       user: user,
-      id: id,
+      id: date,
       name: name,
-      desc: desc,
       priority: priority,
       due_date: due_date,
       completed: completed
     },
     success: function(response) {
       if(response.success) {
-        data.todoList[id] =
+        data.todoList[date.getTime()] =
           {
             "name": name,
             "priority": priority,
             "due_date": due_date,
-            "desc": desc,
-            "timestamp": id ,
+            "timestamp": date,
             "completed": completed
           };
       } else {
