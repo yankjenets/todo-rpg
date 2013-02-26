@@ -1,6 +1,6 @@
 /* CSS for RPG.TODO
  * Michael Hankowsky, Tyler Healy, Double D
- * All Rights Reserved - Sorry
+ * All Rights Reserved 
  */
 
 
@@ -41,6 +41,7 @@ canvas{
 .clear{
   display:none;
 }
+
 /**********************
  * Login Styles
  * ********************/
@@ -159,6 +160,11 @@ input {
   color: #555;
 }
 
+.done{
+  background-color: #333;
+
+}
+
 .task h3{
   font-size:35px;
   margin-bottom: 20px;
@@ -182,6 +188,11 @@ input {
 
 .complete {
   position:relative;
-  left: 80%;
+  left: 64%;
   top 20px;
 }
+
+.delete {
+  position: relative;
+  left: 60%;
+k 

@@ -206,31 +206,39 @@ function refreshDOM() {
     var duedate = $("<h4>").text("Due:"+dateobj.toLocaleDateString()+ " " + dateobj.toLocaleTimeString()); 
 
     var div = $("<div>");
-    var points_label = $("<h6>").text("Points if copleted:");
+    var points_label = $("<h6>").text("Points if completed:");
     var points = $("<h6>").text(calculateScore(data.todoList[item], dateObj));
     points.addClass("tskPoints");
     div.append(points_label);
     div.append(points);
     
     var finished =$("<a>").html("Finished").addClass("complete button");
+    var deleteBut = $("<a>").html("Delete").addClass("delete button");
     var dateObject = new Date(data.todoList[item].timestamp);
+
     finished.attr('id', dateObject.getTime());
     finished.click(function() {
           completeTask(dateObject.getTime());
+    });
+
+    deleteBut.attr('id', dateObject.getTime());
+    deleteBut.click(function() {
+      deleteItem(dateObject.getTime());
     });
 
     var todoAttributes = {
       "class": "task"
     }
     var todo = $("<li>", todoAttributes);
-    if(data.todoList[item].complete){
-      todo.addClass("done");
+    if(data.todoList[item].completed){
+      todo.removeClass("task").addClass("done task");
     }
 
     todo.append(title);
     todo.append(priority);
     todo.append(duedate);
     todo.append(div);
+    todo.append(deleteBut);
     todo.append(finished);
     $(".todo").append(todo);
 
@@ -368,6 +376,7 @@ function completeTask(id) {
         updateHighScore(MILLI_IN_SECOND * 30);
         console.log("AFTER HIGH SCORE: " + data.high_score);
         updateUser();
+        refreshDOM();
       }
     },
     error: function(response) {
