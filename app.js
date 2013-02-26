@@ -56,7 +56,7 @@ app.get("/login", function(request, response) {
   var password = users[username];
 
   if (password !== undefined && password === pass) {
-    var defaultList = "[]";
+    var defaultList = "{}";
     var filename = "" + username + ".txt";
     var userData;
   
