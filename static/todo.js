@@ -1,15 +1,17 @@
 var data = [];
 var user;
 
-//constants
 var canvas;
 var ctx;
 
+//constants
 var WELCOME=1;
 var TASKADDED = 2;
 var TASKCOMPLETE = 3; 
+var LEVELUP = 4;
+var NEWHIGHSCORE = 5;
 
-var canvasState = WELCOME;
+var canvasState = NEWHIGHSCORE;
 
 //Timing Variable
 var TIMER_DELAY = 16.67; //60FPS
@@ -34,13 +36,77 @@ var PRIORITY_ENUM = {
 $(document).ready(function(){
   canvas = document.getElementById("myCanvas");
   ctx = canvas.getContext("2d");
+
+  runCanvas();
 });
 
-function drawWelcome(){
+//Constuctor 
+function DynamicText(txt, x, y, speed){
+  this.txt = txt;
+  this.x = x;
+  this.y = y;
+  this.speed = speed;
+}
+
+//Dynamic Type Objects
+
+//Welcome Message
+var welMSG = new DynamicText("Welcome to RPG.Do",0,0,.3);
+var nhsMSG = new DynamicText("NEW HIGH SCORE",0,40,1);
+var modivation = new DynamicText("Carpe Diem"
+    ,40,100,1);
+
+function drawTime(){
+  var date = new Date();
+  var time = date.toLocaleTimeString();
+  var day = date.toLocaleDateString();
+
+  ctx.font = "bold 20px Nuntio";
+  ctx.fillStyle = "#208AE3";
+  ctx.textAlign = "end";
+  ctx.fillText(time, 600, 20);
+  ctx.fillText(day , 600, 40);
 
 }
 
-function onTimer(){
+function drawWelcome() {
+  ctx.fillStyle = "#555";
+  ctx.font = "bold 40px Nuntio";
+  ctx.textAlign = "start";
+
+  if(welMSG.y < 70){
+  welMSG.y= welMSG.y+welMSG.speed;
+  }
+
+  ctx.fillText(welMSG.txt, welMSG.x, welMSG.y);
+  drawTime();
+}
+
+function drawNewHighScore(){
+  ctx.fillStyle = "#555";
+  ctx.font="bold 40px Nuntio";
+  ctx.textAlign = "end";
+
+  if(nhsMSG.x < 400){
+    nhsMSG.x = nhsMSG.x + nhsMSG.speed;
+  }
+  else if(modivation.y > 65){
+    modivation.y = modivation.y - modivation.speed;
+  }
+  
+  ctx.fillText(nhsMSG.txt, nhsMSG.x, nhsMSG.y);
+
+  ctx.fillStyle = "#555";
+  ctx.font="bold 15px Nuntio";
+  ctx.textAlign = "start";
+
+  ctx.fillText(modivation.txt, modivation.x, modivation.y);
+  drawTime();
+
+}
+
+function onTimer() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   switch(canvasState){
     case WELCOME:
       drawWelcome();
@@ -51,14 +117,17 @@ function onTimer(){
     case TASKCOMPLETE:
       drawTaskComplete();
       break;
+    case NEWHIGHSCORE:
+      drawNewHighScore();
+      break;
   }
 }
 
-function runCanvas(){
+function runCanvas() {
+  canvas.focus();
   intervalID = setInterval(onTimer, TIMER_DELAY);
 }
 
-runCanvas();
 //RPG STUFF
 
 //returns the priority multiplier times the number of hours ahead of due date you finished the task.
@@ -109,7 +178,7 @@ function updateHighScore(time_period) {
   if(highScore > data.high_score) {
     data.high_score = highScore;
     console.log("New high score in last 24 hours: " + data.high_score);
-    // TODO run sprite animation here or some shit
+    canvasState = NEWHIGHSCORE;
   }
 }
 
