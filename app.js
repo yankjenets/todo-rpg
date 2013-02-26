@@ -105,11 +105,11 @@ app.post("/new_user", function(request, response) {
     
     var new_user_data = new Object()
     new_user_data.username = username;
-    new_user_data.level = 1;
+    new_user_data.level = "1";
     new_user_data.powerups = "";
-    new_user_data.total_points = 0;
+    new_user_data.total_points = "0";
     new_user_data.last_login = new Date();
-    new_user_data.high_score = 0;
+    new_user_data.high_score = "0";
     new_user_data.completed_history = [];
     new_user_data.todoList = {};
     writeUserData(username, new_user_data);
@@ -127,14 +127,14 @@ app.post("/todo", function(request, response) {
   var taskname = request.body.name;
   var priority = request.body.priority;
   var due_date = request.body.due_date;
-  var timestamp = new Date(request.body.timestamp);
+  var timestamp = request.body.timestamp;
   
   if (username != undefined &&
        taskname != undefined &&
        priority != undefined &&
        due_date != undefined &&
        timestamp != undefined) {
-    localData[username].todoList[timestamp.getTime()] = 
+    localData[username].todoList[timestamp] = 
       {
         "name": taskname,
         "priority": priority,
@@ -158,32 +158,30 @@ app.post("/todo", function(request, response) {
 // update one item
 app.put("/todo", function(request, response){
   var username = request.param("user");
-  var id = parseInt(request.param("id"));
-  
   var taskname = request.body.name;
   var priority = request.body.priority;
   var due_date = request.body.due_date;
+  var timestamp = request.body.timestamp
   var completed = request.body.completed;
   
   if (username != undefined &&
-       id != undefined &&
        taskname != undefined &&
        priority != undefined &&
        due_date != undefined &&
        timestamp != undefined &&
        completed != undefined) {
-    if(localData[username].todoList[id] === undefined) {
+    if(localData[username].todoList[timestamp] === undefined) {
       response.send({
         success: false,
         doesNotExist: true
       });
     } else {
-      localData.todoList[id] = 
+      localData.todoList[timestamp] = 
         {
           "name": taskname,
           "priority": priority,
           "due_date": due_date,
-          "timestamp": id,
+          "timestamp": timestamp,
           "completed": completed
         };
     
@@ -206,6 +204,7 @@ app.post("/todo/complete", function(request, response) {
   var id = parseInt(request.param("id"));
   var completionDate = request.param("completionDate");
   var points = request.param("points");
+  console.log(localData);
   
   if (username != undefined &&
       id != undefined &&
@@ -213,6 +212,8 @@ app.post("/todo/complete", function(request, response) {
       points != undefined) {
     var userData = localData[username];
     if(userData === undefined || userData.todoList[id] === undefined) {
+      console.log(userData);
+      console.log(userData.todoList[id]);
       response.send({
         success: false,
         doesNotExist: true
