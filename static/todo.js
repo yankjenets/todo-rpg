@@ -5,6 +5,9 @@ var user;
 var canvas;
 var ctx;
 
+
+var canvasState = WELCOME;
+
 //Timing Variable
 var TIMER_DELAY = 16.67; //60FPS
 
@@ -28,6 +31,7 @@ var PRIORITY_ENUM = {
 $(document).ready(function(){
   canvas = document.getElementById("myCanvas");
   ctx = canvas.getContext("2d");
+  runCanvas();
   $("#submitTask").click(addItemDOM());
 });
 
@@ -94,6 +98,25 @@ function refreshDOM() {
     }*/
   }
 }
+
+function onTimer(){
+  switch(canvasState){
+    case WELCOME:
+      drawWelcome();
+      break;
+    case TASKADDED:
+      drawAddedask();
+      break;
+    case TASKCOMPLETE:
+      drawTaskComplete();
+      break;
+  }
+}
+
+function runCanvas(){
+  intervalID = setInterval(onTimer, TIMER_DELAY);
+}
+
 
 //RPG STUFF
 
@@ -312,7 +335,8 @@ function login(username, password) {
       if(response.success) {
         console.log("Logged in successfully as " + username + ".");
         user = username;
-    	  data = response.userData;
+    	data = response.userData;
+    	console.log(data);
       } else {
         console.log("incorrect password");
       }
