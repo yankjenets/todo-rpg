@@ -23,12 +23,6 @@ var MILLI_IN_24_HOURS = MILLI_IN_HOUR * 24;
 
 var POINTS_PER_LEVEL = 50;
 
-var PRIORITY_ENUM = {
-  LOW : {value : 1, name : "low"},
-  MEDIUM : {value : 4, name : "medium"},
-  HIGH : {value : 9, name : "high"}
-};
-
 /*****************
  * Canvas Controls
  *****************/
@@ -199,7 +193,7 @@ function refreshDOM() {
 
     //Create smaller components
     var title = $("<h3>").text(data.todoList[item].name);
-    var priorityValue = data.todoList[item].priority;
+    var priorityValue = parseInt(data.todoList[item].priority);
     var priority;
     switch(priorityValue) {
       case 0: 
@@ -340,7 +334,7 @@ function updateHighScore(time_period) {
 function completeTask(id) {
   var completionDate = new Date();
   var task = data.todoList[id];
-  var score = calculateScore(task, complationDate);
+  var score = calculateScore(task, completionDate);
 
   if(task.completed) {
     console.log("Error: task is already completed.");
