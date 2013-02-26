@@ -158,7 +158,7 @@ app.post("/todo", function(request, response) {
 // update one item
 app.put("/todo", function(request, response){
   var username = request.param("user");
-  var id = request.param("id");
+  var id = parseInt(request.param("id"));
   
   var taskname = request.body.name;
   var priority = request.body.priority;
@@ -166,6 +166,7 @@ app.put("/todo", function(request, response){
   var completed = request.body.completed;
   
   if (username != undefined &&
+       id != undefined &&
        taskname != undefined &&
        priority != undefined &&
        due_date != undefined &&
@@ -202,7 +203,7 @@ app.put("/todo", function(request, response){
 // complete an item
 app.post("/todo/complete", function(request, response) {
   var username = request.param("user");
-  var id = request.param("id");
+  var id = parseInt(request.param("id"));
   var completionDate = request.param("completionDate");
   var points = request.param("points");
   
@@ -257,7 +258,7 @@ app.delete("/todo/completed_history", function(request, response) {
 // delete one list item
 app.delete("/todo", function(request, response){
   var username = request.param("user");
-  var id = request.param("id");
+  var id = parseInt(request.param("id"));
   
   if (username != undefined && id != undefined) {
     var userData = localData[username];
