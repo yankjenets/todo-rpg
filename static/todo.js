@@ -28,7 +28,7 @@ var PRIORITY_ENUM = {
 $(document).ready(function(){
   canvas = document.getElementById("myCanvas");
   ctx = canvas.getContext("2d");
-  $("#submitTask").submit(addItemDOM());
+  $("#submitTask").click(addItemDOM());
 });
 
 //DOM STUFF
