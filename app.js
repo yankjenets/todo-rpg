@@ -57,12 +57,11 @@ app.get("/login", function(request, response) {
   if (password !== undefined && password === pass) {
     var defaultList = "{}";
     var filename = "" + username + ".txt";
-    var userData;
   
     readFile(filename, defaultList, function(err, data) {
       localData[username] = JSON.parse(data);
       localData[username].last_login = new Date();
-      writeUserData(username, userData);
+      writeUserData(username, localData[username]);
     });
   
     response.send({
