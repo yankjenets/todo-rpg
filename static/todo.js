@@ -37,20 +37,18 @@ $(document).ready(function(){
   runCanvas();
 
   $("#submitTask").click(function() {
-    console.log("wtf");
     addItemDOM();
   });
-  //$("#submitTask").click(addItemDOM());
 });
 
 //DOM STUFF
 
 function addItemDOM() {
-  var description = $("#task-input").val();
+  var title = $("#task-input").val();
   var priority = $("#priority-input").val();
   var date = $("#date-input").val();
 
-  addItem(description, "", priority, date);
+  addItem(title, priority, date);
 
   $("#task-input").val("");
   $("#priority-input").val("");
@@ -61,12 +59,31 @@ function addItemDOM() {
 function refreshDOM() {
   $(".todo").html("");
   var item;
-  for(item in data) {
+  for(item in data.todoList) {
+
+    var descriptionObject = $("<p>").text(data.todoList[item].name);
     var todoAttributes = {
       "class": "task"
     }
     var todo = $("<li>", todoAttributes);
+
+    todo.append(descriptionObject);
     $(".todo").append(todo);
+/*
+    <li id="01" class="task">
+          <h3>Description</h3>
+          <h4 class="red">High</h4>
+          <h4>Due: 2/12/13</h4>
+          <div>
+            <h6>Points if Completed today:</h6>
+            <h6 class="tskPoints">120</h6>
+          </div>
+          <p> This is the Long Description......</p>
+
+          <a id="01" class="complete">Finished!</a>
+        </li>
+*/
+
 /*
 
       var deleteAttributes = {
@@ -261,29 +278,33 @@ function updateUser() {
 }
 
 //adds an item to the todo list
-function addItem(name, desc, priority, due_date) {
+function addItem(name, priority, due_date) {
   var date = new Date();
+  data.todoList[date.getTime()] =
+    {
+      "name": name,
+      "priority": priority,
+      "due_date": due_date,
+      "timestamp": date,
+      "completed": false
+    };
+
   $.ajax({
     type: "post",
     url: "/todo",
     data: {
       user: user,
       name: name,
-      desc: desc,
       priority: priority,
       due_date: due_date,
       timestamp: date
     },
     success: function() {
-      data.todoList[date.getTime()] =
-        {
-          "name": name,
-          "priority": priority,
-          "due_date": due_date,
-          "desc": desc,
-          "timestamp": date,
-          "completed": false
-        };
+    
+    },
+    failure: function() {
+      delete data.todoList[date.getTime()];
+      refreshDOM();
     }
   });
 }
@@ -304,7 +325,7 @@ function deleteItem(date) {
 }
 
 //edit an item from the todo list
-function editItem(date, name, desc, priority, due_date, completed) {
+function editItem(date, name, priority, due_date, completed) {
   $.ajax({
     type: "put",
     url: "/todo",
@@ -312,7 +333,6 @@ function editItem(date, name, desc, priority, due_date, completed) {
       user: user,
       id: date,
       name: name,
-      desc: desc,
       priority: priority,
       due_date: due_date,
       completed: completed
@@ -324,7 +344,6 @@ function editItem(date, name, desc, priority, due_date, completed) {
             "name": name,
             "priority": priority,
             "due_date": due_date,
-            "desc": desc,
             "timestamp": date,
             "completed": completed
           };
