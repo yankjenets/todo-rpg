@@ -15,7 +15,6 @@ var MIN_LENGTH = 5;
 
 // The global datastore for user data
 var users;
-var curUser = null;
 var localData = {};
 
 // Asynchronously read file contents, then call callbackFn
@@ -58,12 +57,11 @@ app.get("/login", function(request, response) {
   if (password !== undefined && password === pass) {
     var defaultList = "{}";
     var filename = "" + username + ".txt";
-    var userData;
   
     readFile(filename, defaultList, function(err, data) {
       localData[username] = JSON.parse(data);
       localData[username].last_login = new Date();
-      writeUserData(username, userData);
+      writeUserData(username, localData[username]);
     });
   
     response.send({
@@ -125,48 +123,78 @@ app.post("/new_user", function(request, response) {
 
 // create new item
 app.post("/todo", function(request, response) {
-  var username = request.param("id");
-  localData[username].todoList[request.body.timestamp.getTime()] = 
-    {
-      "name": request.body.name,
-      "priority": request.body.priority,
-      "due_date": request.body.due_date,
-      "desc": request.body.desc,
-      "timestamp": request.body.timestamp,
-      "completed": false
-    };
+  var username = request.param("user");
+  var taskname = request.body.name;
+  var priority = request.body.priority;
+  var due_date = request.body.due_date;
+  var timestamp = request.body.timestamp;
   
-  writeUserData(username, localData[username]);
-  response.send({
-    userData: userData,
-    success: true
-  });
+  if (username != undefined &&
+       taskname != undefined &&
+       priority != undefined &&
+       due_date != undefined &&
+       timestamp != undefined) {
+    localData[username].todoList[request.body.timestamp.getTime()] = 
+      {
+        "name": taskname,
+        "priority": priority,
+        "due_date": due_date,
+        "timestamp": timestamp,
+        "completed": false
+      };
+  
+    writeUserData(username, localData[username]);
+    response.send({
+      userData: userData,
+      success: true
+    });
+  } else {
+    response.send({
+      success: false
+    });
+  }
 });
 
 // update one item
 app.put("/todo", function(request, response){
-  var username = request.param("id");
+  var username = request.param("user");
   var id = request.param("id");
-  if(localData[username].todoList[id] === undefined) {
-    response.send({
-      success: false,
-      doesNotExist: true
-    });
-  } else {
-    localData.todoList[id] = 
-      {
-        "name": request.body.name,
-        "priority": request.body.priority,
-        "due_date": request.body.due_date,
-        "desc": request.body.desc,
-        "timestamp": id,
-        "completed": request.body.completed
-      };
+  
+  var taskname = request.body.name;
+  var priority = request.body.priority;
+  var due_date = request.body.due_date;
+  var completed = request.body.completed;
+  
+  if (username != undefined &&
+       taskname != undefined &&
+       priority != undefined &&
+       due_date != undefined &&
+       timestamp != undefined &&
+       completed != undefined) {
+    if(localData[username].todoList[id] === undefined) {
+      response.send({
+        success: false,
+        doesNotExist: true
+      });
+    } else {
+      localData.todoList[id] = 
+        {
+          "name": taskname,
+          "priority": priority,
+          "due_date": due_date,
+          "timestamp": id,
+          "completed": completed
+        };
     
-    writeUserData(username, userData);
+      writeUserData(username, userData);
+      response.send({
+        userData: userData,
+        success: true
+      });
+    }
+  } else {
     response.send({
-      userData: userData,
-      success: true
+      success: false
     });
   }
 });
@@ -177,37 +205,20 @@ app.post("/todo/complete", function(request, response) {
   var id = request.param("id");
   var completionDate = request.param("completionDate");
   var points = request.param("points");
-  var userData = localData[username];
-  if(userData.todoList[id] === undefined) {
-    response.send({
-      success: false,
-      doesNotExist: true
-    });
-  } else {
-    userData.todoList[id].completed = true;
-    userData.completed_history.push([completionDate, points]);
-    writeUserData(username, userData);
-    response.send({
-      success: true
-    });
-  }
-});
-
-// clean out last 24 hours list
-app.delete("/todo/completed_history", function(request, response) {
-  var username = request.param("user");
-  var numToDelete = request.param("numToDelete");
-  var userData = localData[username];
-  if(userData.completed_history === undefined ||
-     userData.completed_history.length < numToDelete) {
-    response.send({
-      success: false,
-      doesNotExist: true
-    });
-  } else {
-    for(i = 0; i < numToDelete; i++) {
-      // delete the first numToDelete entries in the list
-      userData.completed_history.splice(0, 1);
+  
+  if (username != undefined &&
+      id != undefined &&
+      completionDate != undefined &&
+      points != undefined) {
+    var userData = localData[username];
+    if(userData === undefined || userData.todoList[id] === undefined) {
+      response.send({
+        success: false,
+        doesNotExist: true
+      });
+    } else {
+      userData.todoList[id].completed = true;
+      userData.completed_history.push([completionDate, points]);
       writeUserData(username, userData);
       response.send({
         success: true
@@ -216,34 +227,81 @@ app.delete("/todo/completed_history", function(request, response) {
   }
 });
 
+// clean out last 24 hours list
+app.delete("/todo/completed_history", function(request, response) {
+  var username = request.param("user");
+  var numToDelete = request.param("numToDelete");
+  
+  if (username != undefined && numToDelete != undefined) {
+    var userData = localData[username];
+    if(userDate === undefined ||
+       userData.completed_history === undefined ||
+       userData.completed_history.length < numToDelete) {
+      response.send({
+        success: false,
+        doesNotExist: true
+      });
+    } else {
+      for(i = 0; i < numToDelete; i++) {
+        // delete the first numToDelete entries in the list
+        userData.completed_history.splice(0, 1);
+        writeUserData(username, userData);
+        response.send({
+          success: true
+        });
+      }
+    }
+  }
+});
+
 // delete one list item
 app.delete("/todo", function(request, response){
   var username = request.param("user");
   var id = request.param("id");
-  var userData = localData[username];
-  delete userData.todoList[id];
-  writeUserData(username, userData);
-  response.send({
-    todoList: userData.todoList,
-    success: true
-  });
+  
+  if (username != undefined && id != undefined) {
+    var userData = localData[username];
+    if (userData != undefined) {
+      delete userData.todoList[id];
+      writeUserData(username, userData);
+      response.send({
+        todoList: userData.todoList,
+        success: true
+      });
+    }
+  }
 });
 
 //update user stats
 app.put("/profile", function(request, response){
   var username = request.body.user;
-  var userData = localData[username];
-  if(userData !== undefined) {
-    userData.level = request.body.level;
-    userData.powerups = request.body.powerups;
-    userData.total_points = request.body.total_points;
-    userData.high_score = request.body.high_score;
+  var level = request.body.level;
+  var powerups = request.body.powerups;
+  var total_points = request.body.total_points;
+  var high_score = request.body.high_score;
+  
+  if (username != undefined &&
+      level != undefined &&
+      powerups != undefined &&
+      total_points != undefined &&
+      high_score != undefined) {
+    var userData = localData[username];
+    if(userData !== undefined) {
+      userData.level = level;
+      userData.powerups = powerups;
+      userData.total_points = total_points;
+      userData.high_score = high_score;
     
-    writeUserData(username, userData);
-    response.send({
-      userData: userData,
-      success: true
-    });
+      writeUserData(username, userData);
+      response.send({
+        userData: userData,
+        success: true
+      });
+    } else {
+      response.send({
+        success: false
+      });
+    }
   } else {
     response.send({
       success: false
