@@ -5,6 +5,9 @@ var user;
 var canvas;
 var ctx;
 
+
+var canvasState = WELCOME;
+
 //Timing Variable
 var TIMER_DELAY = 16.67; //60FPS
 
@@ -30,7 +33,25 @@ $(document).ready(function(){
   ctx = canvas.getContext("2d");
 });
 
+function onTimer(){
+  switch(canvasState){
+    case WELCOME:
+      drawWelcome();
+      break;
+    case TASKADDED:
+      drawAddedask();
+      break;
+    case TASKCOMPLETE:
+      drawTaskComplete();
+      break;
+  }
+}
 
+function runCanvas(){
+  intervalID = setInterval(onTimer, TIMER_DELAY);
+}
+
+runCanvas();
 //RPG STUFF
 
 //returns the priority multiplier times the number of hours ahead of due date you finished the task.
