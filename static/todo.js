@@ -5,6 +5,9 @@ var user;
 var canvas;
 var ctx;
 
+var WELCOME=1;
+var TASKADDED = 2;
+var TASKCOMPLETE = 3; 
 
 var canvasState = WELCOME;
 
@@ -32,6 +35,10 @@ $(document).ready(function(){
   canvas = document.getElementById("myCanvas");
   ctx = canvas.getContext("2d");
 });
+
+function drawWelcome(){
+
+}
 
 function onTimer(){
   switch(canvasState){
