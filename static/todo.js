@@ -63,7 +63,7 @@ var nhsMSG = new DynamicText("NEW HIGH SCORE",0,40,1);
 var modivation = new DynamicText("Carpe Diem"
     ,40,100,1);
 var taskMSG = new DynamicText("task", 0, 0, .3);
-var scoreMSG = new DynamicText("score", 300, 30, 0);
+var scoreMSG = new DynamicText("score", 20, 50, 0);
 
 function drawTime(){
   var date = new Date();
@@ -79,7 +79,7 @@ function drawTime(){
 }
 
 function setCanvasScore(score){
-  scrMSG = score+"points added!!";
+  scoreMSG.txt = "You Gained "+score+" points!";
   canvasState = TASKCOMPLETE;
 }
 
@@ -88,18 +88,7 @@ function drawTaskComplete(){
   ctx.font = "bold 40px Nuntio";
   ctx.textAlign = "start";
 
-  /*if(scoreMSG.speed < 40){
-   if(scoreMSG % 1){
-    ctx.fillText(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
-    scoreMSG++;
-   }
-    else{
-      scoreMSG++;
-    }
-  }else{
-  ctx.fillText(taskMSG.txt, taskMSG.x, taskMSG.y);
-  }*/
-  ctx.fillTest(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
+  ctx.fillText(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
   drawTime();
 
 }

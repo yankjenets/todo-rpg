@@ -51,6 +51,10 @@ canvas{
   z-index:1;
 }
 
+.centered{
+  margin:0 auto;
+}
+
 
 /***********************
  * Header Styles *
