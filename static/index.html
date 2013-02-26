@@ -17,6 +17,16 @@
   </head>
 
   <body>
+    <div class="login task">
+      <h3>LOGIN:</h3>
+      <form>
+        <input name="username" placeholder="username">
+        <input name="password" type="password" >
+        <input type="submit"> 
+      </form>
+      <p> Note: Passwords are saved as plaintext. We fucked up.</p>
+
+    </div>
     <div class="wrapper">
     <div class="header">
       <h1 class="blue"> RPG</h1><h1>.Do</h1>
@@ -32,7 +42,7 @@
 
       <form class="input">
         <label class="block">Enter what you want to do:</label>
-        <input id="task-input" name="task" placeholder="Description"/>
+        <input id="task-input" name="task" placeholder="Title"/>
         <div>
           <label>Priority:</label><select id="priority-input" name="priority">
             <option value="low">Low</option>
@@ -40,12 +50,21 @@
             <option value="high">High</option>
           </select>
           <label>Due Date:</label>
-          <input type="date" id="date-input" name="duedate">
-          <input type="submit">
+
+          <input type="date" id="date-input" name "duedate">
+          <div>
+            <label>Time Due:</label>
+            <input class=time>:<input class=time> <select name=ampm>
+              <option value="am">AM</option>
+              <option value="pm">PM</option>
+            </select>
+
+          </div> 
+          <input id="submitTask" class="submit" type="submit">
         </div>
       </form>
 
-    <canvas class="canvas" width="600" height="75">
+    <canvas id="myCanvas" width="600" height="75">
     </canvas>
 
     <div class="tasks">
@@ -53,7 +72,7 @@
       <ul class="todo">
         <li id="01" class="task">
           <h3>Description</h3>
-          <h4 class="red">Heigh</h4>
+          <h4 class="red">High</h4>
           <h4>Due: 2/12/13</h4>
           <div>
             <h6>Points if Completed today:</h6>

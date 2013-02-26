@@ -2,6 +2,11 @@ var data = [];
 var user;
 
 //constants
+var canvas;
+var ctx;
+
+//Timing Variable
+var TIMER_DELAY = 16.67; //60FPS
 
 var MILLI_IN_SECOND = 1000;
 var MILLI_IN_MINUTE = MILLI_IN_SECOND * 60;
@@ -16,9 +21,17 @@ var PRIORITY_ENUM = {
   HIGH : {value : 9, name : "high"}
 };
 
+/*****************
+ * Canvas Controls
+ *****************/
+
+$(document).ready(function(){
+  canvas = document.getElementById("myCanvas");
+  ctx = canvas.getContext("2d");
+  $("#submitTask").submit(addItemDOM());
+});
+
 //DOM STUFF
-
-
 
 function addItemDOM() {
   var description = $("#task-input").val();
