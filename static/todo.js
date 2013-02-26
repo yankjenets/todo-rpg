@@ -216,11 +216,11 @@ function refreshDOM() {
     if(priorityValue === 2){
       priority.addClass("red");
     }
-    var dateobj = new Date(data.todoList[item].due_date);
+    var dateobj = new Date(parseInt(data.todoList[item].due_date));
     var duedate = $("<h4>").text("Due:"+dateobj.toLocaleDateString()+ " " + dateobj.toLocaleTimeString()); 
 
     var div = $("<div>");
-    var points_label = $("<h6>").text("Points if copleted:");
+    var points_label = $("<h6>").text("Points if completed:");
     var points = $("<h6>").text(calculateScore(data.todoList[item], dateObj));
     points.addClass("tskPoints");
     div.append(points_label);
@@ -285,7 +285,7 @@ function runCanvas() {
 function calculateScore(task, time) {
   console.log("INSIDE CALCULATE SCORE");
   console.log("DUE DATE: " + task.due_date);
-  var timeBeforeDue = new Date(task.due_date) - time;
+  var timeBeforeDue = new Date(parseInt(task.due_date)) - time;
   console.log("TIME BEFORE DUE: " + timeBeforeDue);
 
   return Math.floor(Math.pow((parseInt(task.priority) + 1), 2) * timeBeforeDue / MILLI_IN_HOUR) + 1;
