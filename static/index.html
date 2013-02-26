@@ -20,10 +20,13 @@
     <div class="login task">
       <h3>LOGIN:</h3>
       <form>
-        <input name="username" placeholder="username">
-        <input name="password" type="password" >
-        <a class="submit button" id="userSignon">SignOn</a>
+        <input id="username" name="username" placeholder="username">
+        <input id="pass" name="password" type="password" >
+        <a class="button" id="userSignon">SignOn</a>
+        <a class="button" id="userRegister">Register</a>
       </form>
+      <label id="loginError" class="red"></label>
+      <p> To register just enter a username and password </p>
       <p> Note: Passwords are saved as plaintext. We fucked up.</p>
 
     </div>
@@ -70,20 +73,9 @@
     <div class="tasks">
 
       <ul class="todo">
-        <li id="01" class="task">
-          <h3>Description</h3>
-          <h4 class="red">High</h4>
-          <h4>Due: 2/12/13</h4>
-          <div>
-            <h6>Points if Completed today:</h6>
-            <h6 class="tskPoints">120</h6>
-          </div>
-          <p> This is the Long Description......</p>
-
-          <a id="01" class="complete">Finished!</a>
-        </li>
 
       </ul>
+        </li>
 
     </div>
   </div>

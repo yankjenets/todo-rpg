@@ -38,6 +38,18 @@ $(document).ready(function(){
   ctx = canvas.getContext("2d");
 
 
+  $("#userSignon").click(function() {
+    userLoginDOM();
+  });
+  
+  $("#userRegister").click(function() {
+    userRegisterDOM();
+  });
+
+  $("#submitTask").click(function() {
+    addItemDOM();
+  });
+
   runCanvas();
 });
 
@@ -106,11 +118,28 @@ function drawNewHighScore(){
 }
 
 
-  $("#submitTask").click(function() {
-    addItemDOM();
-  });
-
 //DOM STUFF
+
+function userLoginDOM() {
+  var username = $("#username").val();
+  var password = $("#pass").val();
+
+  login(username, password);
+
+  $("#username").val("");
+  $("#pass").val("");
+}
+
+function userRegisterDOM() {
+  var username = $("#username").val();
+  var password = $("#pass").val();
+
+  new_user(username, password);
+
+  $("#username").val("");
+  $("#pass").val("");
+}  
+
 
 function addItemDOM() {
   var title = $("#task-input").val();
@@ -128,68 +157,50 @@ function addItemDOM() {
 function refreshDOM() {
   $(".todo").html("");
   var item;
+  var dateObj = new Date();
   for(item in data.todoList) {
 
-    var descriptionObject = $("<p>").text(data.todoList[item].name);
+    //Create smaller components
+    var title = $("<h3>").text(data.todoList[item].name);
+    var priority = $("<h4>").text(data.todoList[item].priority);
+    if(data.todoList[item].priority === "high"){
+      priority.addClass("red");
+    }
+    var duedate = $("<h4>").text("Due:"+data.todoList[item].due_date); 
+
+    var div = $("<div>");
+    var points_label = $("<h6>").text("Points if copleted:");
+    var points = $("<h6>").text(calculateScore(data.todoList[item], dateObj));
+    points.addClass("tskPoints");
+    div.append(points_label);
+    div.append(points);
+    
+    var finished =$("<a>").html("Finished").addClass("complete button");
+    var dateObject = new Date(data.todoList[item].timestamp);
+    finished.attr('id', dateObject.getTime());
+    finished.click(function() {
+          deleteItem(dateObject.getTime());
+    });
+
     var todoAttributes = {
       "class": "task"
     }
     var todo = $("<li>", todoAttributes);
+    if(data.todoList[item].complete){
+      todo.addClass("done");
+    }
 
-    todo.append(descriptionObject);
+    todo.append(title);
+    todo.append(priority);
+    todo.append(duedate);
+    todo.append(div);
+    todo.append(finished);
     $(".todo").append(todo);
-/*
-    <li id="01" class="task">
-          <h3>Description</h3>
-          <h4 class="red">High</h4>
-          <h4>Due: 2/12/13</h4>
-          <div>
-            <h6>Points if Completed today:</h6>
-            <h6 class="tskPoints">120</h6>
-          </div>
-          <p> This is the Long Description......</p>
 
-          <a id="01" class="complete">Finished!</a>
-        </li>
-*/
+    //Points and level
+    $("#level").html(data.level);
+    $("#points").html(data.total_points);
 
-/*
-
-      var deleteAttributes = {
-        "href" : "#",
-        "onclick" : "delRefresh(" + i + ")"
-      };
-      var deleteButton = $("<a>", deleteAttributes).text("Delete");
-
-      var soldAttributes = {
-        "href" : "#",
-        "onclick" : "sold(" + i + ")"
-      };
-      var soldButton = $("<a>", soldAttributes).text("Sold!");
-
-      var authorObject = $("<h3>").text(listings[i].author);
-      var dateObject = $("<h6>").text(listings[i].date);
-      var descObject = $("<p>").text(listings[i].desc);
-      var priceObject = $("<p>").text("$" + listings[i].price);
-
-      var soldClass = "notSold";
-      if(listings[i].sold) {
-        soldClass = "sold";
-      }
-      var listingAttributes = {
-        //"id" : listings[i].date.toString().replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, ''),
-        "class" : soldClass
-      }
-      var listing = $("<li>", listingAttributes);
-      authorObject.appendTo(listing);
-      dateObject.appendTo(listing);
-      descObject.appendTo(listing);
-      priceObject.appendTo(listing);
-      deleteButton.appendTo(listing);
-      soldButton.appendTo(listing);
-
-      $(".listings").append(listing);
-    }*/
   }
 }
 
@@ -222,6 +233,7 @@ function runCanvas() {
 //returns the priority multiplier times the number of hours ahead of due date you finished the task.
 function calculateScore(task, time) {
   var timeBeforeDue = task.due_date - time;
+  console.log(task);
   return Math.floor(task.priority.value * timeBeforeDue / MILLI_IN_HOUR) + 1;
 }
 
@@ -389,7 +401,8 @@ function deleteItem(date) {
       id: date
     },
     success: function() {
-      delete data.todoList[date.getTime()];
+      delete data.todoList[date];
+      refreshDOM();
     }
   });
 }
@@ -435,11 +448,13 @@ function login(username, password) {
   	success: function(response) {
       if(response.success) {
         console.log("Logged in successfully as " + username + ".");
+        $(".login").addClass("clear");
         user = username;
     	data = response.userData;
     	console.log(data);
+      refreshDOM();
       } else {
-        console.log("incorrect password");
+        $("#loginError").html("incorrect password");
       }
   	}
   });
@@ -454,17 +469,18 @@ function new_user(username, password) {
     success: function(response) {
       if(response.success) {
         console.log("new user created successfully");
+        $(".login").addClass("clear");
         user = username;
         data = response.userData;
       } else {
         if(response.usernameTooShort) {
-          console.log("Please enter a valid username.");
+          $("#loginError").html("Please enter a valid username.(Username > 5 chars)");
         }
         if(response.passwordTooShort) {
-          console.log("Please enter a valid password.");
+          $("#loginError").html("Please enter a valid password.(5 or more characters");
         }
         if(response.alreadyExists) {
-          console.log("Sorry, that username is already taken.");
+          $("#loginError").html("Sorry, that username is already taken.");
         }
       }
     }

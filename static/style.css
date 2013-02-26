@@ -37,6 +37,10 @@ canvas{
   border-radius: 4px;
   border: 1px solid #CCC;
 }
+
+.clear{
+  display:none;
+}
 /**********************
  * Login Styles
  * ********************/
@@ -44,7 +48,6 @@ canvas{
   position:fixed;
   left:60px;
   z-index:1;
-  display:none;
 }
 
 
