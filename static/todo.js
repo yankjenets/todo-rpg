@@ -62,6 +62,7 @@ var welMSG = new DynamicText("Welcome to RPG.Do",0,0,.3);
 var nhsMSG = new DynamicText("NEW HIGH SCORE",0,40,1);
 var modivation = new DynamicText("Carpe Diem"
     ,40,100,1);
+var taskMSG = new DynamicText("task", 0, 0, .3);
 
 function drawTime(){
   var date = new Date();
@@ -86,11 +87,11 @@ function drawTaskAdded() {
   ctx.font = "bold 40px Nuntio";
   ctx.textAlign = "start";
 
-  if(welMSG.y < 70){
-  welMSG.y= welMSG.y+welMSG.speed;
+  if(taskMSG.y < 70){
+  taskMSG.y= taskMSG.y+taskMSG.speed;
   }
 
-  ctx.fillText(welMSG.txt, welMSG.x, welMSG.y);
+  ctx.fillText(taskMSG.txt, taskMSG.x, taskMSG.y);
   drawTime();
 }
 
@@ -165,18 +166,19 @@ function addItemDOM() {
   if(!(1 <= hour && hour <= 12) || !(0 <= minute && minute <= 59)) {
     hour = 24;
     minute = 0;
-    console.log("Defaulting to midnight since a valid time was not entered.");
+    $("#taskInputError").html("Defaulting to midnight since a valid time was not entered.");
   } else {
     hour += time_parity;
   }
   var splitDate = date.split("-");
   if(splitDate.length != 3) {
-    console.log("Please enter a valid date.");
+    $("#taskInputError").html("Please enter a valid date.");
     return;
   }
 
   var dateObject = new Date(splitDate[0], splitDate[1] - 1, splitDate[2], hour, minute, 0, 0);
 
+  setTaskToDraw(title);
   addItem(title, priority, dateObject.getTime());
 
   $("#task-input").val("");
@@ -254,6 +256,7 @@ function refreshDOM() {
     $("#level").html(data.level);
     $("#points").html(data.total_points);
 
+    $("#taskInputError").html("");
   }
 }
 
