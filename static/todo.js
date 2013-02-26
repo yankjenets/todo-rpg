@@ -224,17 +224,13 @@ function refreshDOM() {
     
     var finished =$("<a>").html("Finished").addClass("complete button");
     var deleteBut = $("<a>").html("Delete").addClass("delete button");
-    var dateObject = new Date(data.todoList[item].timestamp);
+    var dateObject = data.todoList[item].timestamp;
 
-    finished.attr('id', dateObject.getTime());
-    finished.click(function() {
-      completeTask(dateObject.getTime());
-    });
+    finished.attr('id', dateObject);
+    finished.click(completeClick(dateObject));
 
-    deleteBut.attr('id', dateObject.getTime());
-    deleteBut.click(function() {
-      deleteItem(dateObject.getTime());
-    });
+    deleteBut.attr('id', dateObject);
+    deleteBut.click(deleteClick(dateObject));
 
     var todoAttributes = {
       "class": "task"
@@ -260,6 +256,19 @@ function refreshDOM() {
   }
 }
 
+function completeClick(date) {
+  return function() {
+    completeTask(date);
+    refreshDOM();
+  }
+}
+
+function deleteClick(date) {
+  return function() {
+    deleteItem(date);
+    refreshDOM();
+  }
+}
 
 function onTimer() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -411,12 +420,12 @@ function updateUser() {
 
 //adds an item to the todo list
 function addItem(name, priority, due_date) {
-  var date = new Date();
-  data.todoList[date.getTime()] =
+  var date = new Date().getTime();
+  data.todoList[date] =
     {
       "name": name,
       "priority": priority,
-      "due_date": due_date,
+      "due_date": due_date.toString(),
       "timestamp": date,
       "completed": false
     };
@@ -428,7 +437,7 @@ function addItem(name, priority, due_date) {
       user: user,
       name: name,
       priority: priority,
-      due_date: due_date.toString(),
+      due_date: due_date,
       timestamp: date
     },
     success: function() {
