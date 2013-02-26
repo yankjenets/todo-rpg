@@ -225,14 +225,10 @@ function refreshDOM() {
     var dateObject = data.todoList[item].timestamp;
 
     finished.attr('id', dateObject);
-    finished.click(function() {
-      completeTask(dateObject);
-    });
+    finished.click(completeClick(dateObject));
 
     deleteBut.attr('id', dateObject);
-    deleteBut.click(function() {
-      deleteItem(dateObject);
-    });
+    deleteBut.click(deleteClick(dateObject));
 
     var todoAttributes = {
       "class": "task"
@@ -257,6 +253,19 @@ function refreshDOM() {
   }
 }
 
+function completeClick(date) {
+  return function() {
+    completeTask(date);
+    refreshDOM();
+  }
+}
+
+function deleteClick(date) {
+  return function() {
+    deleteItem(date);
+    refreshDOM();
+  }
+}
 
 function onTimer() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
