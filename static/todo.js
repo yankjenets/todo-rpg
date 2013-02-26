@@ -16,6 +16,36 @@ var PRIORITY_ENUM = {
   HIGH : {value : 9, name : "high"}
 };
 
+//DOM STUFF
+
+
+
+function addItemDOM() {
+  var description = $("#task-input").val();
+  var priority = $("#priority-input").val();
+  var date = $("#date-input").val();
+
+  addItem(description, "", priority, date);
+
+  $("#task-input").val("");
+  $("#priority-input").val("");
+  $("#date-input").val("");
+  refreshDOM();
+}
+
+function refreshDOM() {
+  $(".todo").html("");
+  var item;
+  for(item in data) {
+    var todoAttributes = {
+      "class": "task"
+    }
+    var todo = $("<li>", todoAttributes);
+    $(".todo").append(todo);
+
+  }
+}
+
 //RPG STUFF
 
 //returns the priority multiplier times the number of hours ahead of due date you finished the task.
