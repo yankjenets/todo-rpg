@@ -11,7 +11,7 @@ var TASKCOMPLETE = 3;
 var LEVELUP = 4;
 var NEWHIGHSCORE = 5;
 
-var canvasState = NEWHIGHSCORE;
+var canvasState = WELCOME;
 
 //Timing Variable
 var TIMER_DELAY = 16.67; //60FPS
@@ -81,6 +81,25 @@ function drawTime(){
   ctx.fillText(day , 600, 40);
 
 }
+
+function setTaskToDraw(task) {
+  taskMSG.txt = task;
+  canvasState = TASKADDED;
+}
+
+function drawTaskAdded() {
+  ctx.fillStyle = "#555";
+  ctx.font = "bold 40px Nuntio";
+  ctx.textAlign = "start";
+
+  if(welMSG.y < 70){
+  welMSG.y= welMSG.y+welMSG.speed;
+  }
+
+  ctx.fillText(welMSG.txt, welMSG.x, welMSG.y);
+  drawTime();
+}
+
 
 function drawWelcome() {
   ctx.fillStyle = "#555";
@@ -197,7 +216,7 @@ function refreshDOM() {
     var dateObject = new Date(data.todoList[item].timestamp);
     finished.attr('id', dateObject.getTime());
     finished.click(function() {
-          deleteItem(dateObject.getTime());
+          completeTask(dateObject.getTime());
     });
 
     var todoAttributes = {
@@ -230,7 +249,7 @@ function onTimer() {
       drawWelcome();
       break;
     case TASKADDED:
-      drawAddedask();
+      drawTaskAdded();
       break;
     case TASKCOMPLETE:
       drawTaskComplete();
