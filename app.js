@@ -134,7 +134,7 @@ app.post("/todo", function(request, response) {
        priority != undefined &&
        due_date != undefined &&
        timestamp != undefined) {
-    localData[username].todoList[request.body.timestamp.getTime()] = 
+    localData[username].todoList[timestamp.getTime()] = 
       {
         "name": taskname,
         "priority": priority,
