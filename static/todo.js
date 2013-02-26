@@ -88,7 +88,7 @@ function drawTaskComplete(){
   ctx.font = "bold 40px Nuntio";
   ctx.textAlign = "start";
 
-  if(scoreMSG.speed < 40){
+  /*if(scoreMSG.speed < 40){
    if(scoreMSG % 1){
     ctx.fillText(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
     scoreMSG++;
@@ -98,7 +98,8 @@ function drawTaskComplete(){
     }
   }else{
   ctx.fillText(taskMSG.txt, taskMSG.x, taskMSG.y);
-  }
+  }*/
+  ctx.fillTest(scoreMSG.txt, scoreMSG.x, scoreMSG.y);
   drawTime();
 
 }
@@ -280,12 +281,14 @@ function refreshDOM() {
     todo.append(finished);
     $(".todo").append(todo);
 
+  }
+
     //Points and level
     $("#level").html(data.level);
     $("#points").html(data.total_points);
 
     $("#taskInputError").html("");
-  }
+  
 }
 
 function completeClick(date) {
