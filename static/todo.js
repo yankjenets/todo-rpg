@@ -183,7 +183,8 @@ function refreshDOM() {
     if(data.todoList[item].priority === "high"){
       priority.addClass("red");
     }
-    var duedate = $("<h4>").text("Due:"+data.todoList[item].due_date); 
+    var dateobj = new Date(data.todoList[item].due_date);
+    var duedate = $("<h4>").text("Due:"+dateobj.toLocaleDateString()+ " " + dateobj.toLocaleTimeString()); 
 
     var div = $("<div>");
     var points_label = $("<h6>").text("Points if copleted:");
