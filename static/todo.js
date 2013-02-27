@@ -48,6 +48,14 @@ $(document).ready(function(){
     addItemDOM();
   });
 
+  $("#achievementButton").click(function() {
+    showAchievements();
+  });
+
+  $("#todoButton").click(function() {
+    hideAchievements();
+  });
+
   resetDateFields();
 
   runCanvas();
@@ -156,6 +164,32 @@ function drawNewHighScore(){
 
 //DOM STUFF
 
+function hideAchievements() {
+  $(".wrapper").removeClass("clear");
+  $(".achievements").addClass("clear");
+}
+
+function showAchievements() {
+  $("#achievementList").html(""); 
+  var achievement;
+  var i;
+  for(i = 0; i < data.achievements.length; i++) {
+    achievement = data.achievements[i];
+    var achievementAttributes = {
+      "class": "task"
+    }
+    if(achievement.completed === true || achievement.completed === "true") {
+      var description = $("<h6>").text(achievement.description);
+      achievementObject = $("<li>", achievementAttributes);
+      achievementObject.append(description);
+      $("#achievementList").append(achievementObject);
+    }
+  }
+
+  $(".wrapper").addClass("clear");
+  $(".achievements").removeClass("clear");
+}
+
 function resetDateFields() {
   var currDate = new Date();
   var today = currDate.toISOString().split("T")[0];
@@ -166,6 +200,9 @@ function resetDateFields() {
   }
   $("#date-input").val(today);
   $("#hour-input").val(hour % 12);
+  if($("#hour-input").val() == "0") {
+    $("#hour-input").val(12);
+  }
   $("#minute-input").val(minute);
   if(hour > 12) {
     $("#time-parity-input").val(12);
@@ -359,6 +396,20 @@ function updateLevel() {
   }
 }
 
+function updateAchievements() {
+  if(data.level >= 5) {
+    data.achievements[0].completed = true;
+  } else {
+    data.achievements[0].completed = false;
+  }
+
+  if(data.total_tasks >= 5) {
+    data.achievements[1].completed = true;
+  } else {
+    data.achievements[1].completed = false;
+  }
+}
+
 function updateHighScore(time_period) {
   var date = new Date();
   var i;
@@ -420,11 +471,13 @@ function completeTask(id) {
         task.completed = true;
         updateTotalPoints(score);
         updateLevel();
+        data.total_tasks = parseInt(data.total_tasks) + 1;
         console.log("COMPLETED LAST 24 before: " + JSON.stringify(data.completed_history, null, 4));
         data.completed_history.push([completionDate, score]);
         console.log("COMPLETED LAST 24 after: " + JSON.stringify(data.completed_history, null, 4));
         console.log("PREV HIGH SCORE: " + data.high_score);
         updateHighScore(MILLI_IN_SECOND * 30);
+        updateAchievements();
         console.log("AFTER HIGH SCORE: " + data.high_score);
         updateUser();
         refreshDOM();
@@ -450,7 +503,9 @@ function updateUser() {
       powerups: data.powerups,
       total_points: data.total_points,
       high_score: data.high_score,
-      running_total: data.running_total
+      running_total: data.running_total,
+      total_tasks: data.total_tasks,
+      achievements: data.achievements
     },
     success: function() {
 
