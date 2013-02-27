@@ -261,6 +261,10 @@ function addItemDOM() {
     $("#taskInputError").html("Please enter a valid date.");
     return;
   }
+  if(title === "") {
+    $("#taskInputError").html("Please enter a task name.");
+    return;
+  }
 
   var dateObject = new Date(splitDate[0], splitDate[1] - 1, splitDate[2], hour, minute, 0, 0);
 
