@@ -10,7 +10,6 @@ var TASKADDED = 2;
 var TASKCOMPLETE = 3; 
 var LEVELUP = 4;
 var NEWHIGHSCORE = 5;
-
 var canvasState = WELCOME;
 
 //Timing Variable
@@ -164,6 +163,14 @@ function drawNewHighScore(){
 
 //DOM STUFF
 
+function refreshData() {
+  updateLevel();
+  updateHighScore(MILLI_IN_24_HOURS * 30);
+  updateAchievements();
+  updateUser();
+  refreshDOM();
+}
+
 function hideAchievements() {
   $(".wrapper").removeClass("clear");
   $(".achievements").addClass("clear");
@@ -303,16 +310,18 @@ function refreshDOM() {
 
     //HTML for buying things. 
     var powerups = $("<select>").addClass("powerups");
-    var delayDay = $("<option>").attr('value', 'delayday').html("Delay 1 day(2000Points)");
-    var raisePriority = $("<option>").attr('value', 'raisePri').html("Raise Priority(100Points)");
-    powerups.append(delayDay);
-    powerups.append(raisePriority);
+    var i;
+    for(i = 0; i < data.powerups.length; i++) {
+      var powerup = $("<option>").attr("value", data.powerups[i].id).html(data.powerups[i].description + " (" + data.powerups[i].cost + " points)");
+      powerups.append(powerup);
+    }
+
     
     //Get id for use in functions
     var dateObject = data.todoList[item].timestamp;
 
     var usepower = $("<a>").html("Use").addClass("usePower button");
-    usepower.click(usePowerUp(dateObject));
+    usepower.click(usePowerUp(data.todoList[item]));
     
     //Buttons to finish/delete tasks
     var finished =$("<a>").html("Finished").addClass("complete button");
@@ -331,7 +340,7 @@ function refreshDOM() {
       "class": "task"
     }
     var todo = $("<li>", todoAttributes);
-    if(data.todoList[item].completed){
+    if(String(data.todoList[item].completed) === "true") {
       todo.removeClass("task").addClass("done task");
     }
 
@@ -355,9 +364,34 @@ function refreshDOM() {
   $("#taskInputError").html("");
 }
 
-function usePowerUp(power, date){
+function usePowerUp(item){
   return function(){
-    //TODO implement this
+    var index = parseInt($(this).parent().children("select").find(":selected").val());
+    var cost = parseInt(data.powerups[index].cost);
+    if(data.total_points > cost) {
+      switch(index) {
+        case 0:
+          item.due_date = String(parseInt(item.due_date) + MILLI_IN_24_HOURS);
+          //subtract cost from your points
+          updateTotalPoints(-1 * parseInt(data.powerups[index].cost));
+          break;
+        case 1:
+          if(item.priority < 2) {
+            item.priority = String(parseInt(item.priority) + 1);
+            updateTotalPoints(-1 * parseInt(data.powerups[index].cost));
+          } else {
+            $("#taskInputError").html("Already at highest priority.");
+            return;
+          }
+          break;
+      }
+    } else {
+      $("#taskInputError").html("You do not have enough points to use that powerup.");
+      return;
+    }
+    //send new item stats to the server
+    editItem(item.timestamp, item.name, item.priority, item.due_date, item.completed);
+    refreshData();
   }
 }
 
@@ -493,17 +527,9 @@ function completeTask(id) {
       } else {
         task.completed = true;
         updateTotalPoints(score);
-        updateLevel();
         data.total_tasks = parseInt(data.total_tasks) + 1;
-        console.log("COMPLETED LAST 24 before: " + JSON.stringify(data.completed_history, null, 4));
         data.completed_history.push([completionDate, score]);
-        console.log("COMPLETED LAST 24 after: " + JSON.stringify(data.completed_history, null, 4));
-        console.log("PREV HIGH SCORE: " + data.high_score);
-        updateHighScore(MILLI_IN_SECOND * 30);
-        updateAchievements();
-        console.log("AFTER HIGH SCORE: " + data.high_score);
-        updateUser();
-        refreshDOM();
+        refreshData();
         setCanvasScore(score);
       }
     },
@@ -585,28 +611,21 @@ function deleteItem(date) {
 }
 
 //edit an item from the todo list
-function editItem(date, name, priority, due_date, completed) {
+function editItem(timestamp, name, priority, due_date, completed) {
   $.ajax({
     type: "put",
     url: "/todo",
     data: {
       user: user,
-      id: date,
+      timestamp: timestamp,
       name: name,
       priority: priority,
       due_date: due_date,
-      completed: completed
+      completed: (String(completed) === "true")
     },
     success: function(response) {
       if(response.success) {
-        data.todoList[date.getTime()] =
-          {
-            "name": name,
-            "priority": priority,
-            "due_date": due_date.toString(),
-            "timestamp": date,
-            "completed": completed
-          };
+
       } else {
         console.log("item cannot be edited as it does not exist");
       }

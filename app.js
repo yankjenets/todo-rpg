@@ -18,6 +18,7 @@ var users;
 var localData = {};
 
 var defaultAchievements = [{description: "Reached level 5", completed: false}, {description: "Completed 5 tasks", completed: false}];
+var defaultPowerups = [{id: 0, description: "Delay 1 day", cost: 50}, {id: 1, description: "Raise Priority", cost: 10}];
 
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
@@ -132,7 +133,7 @@ app.post("/new_user", function(request, response) {
     var new_user_data = new Object()
     new_user_data.username = username;
     new_user_data.level = "1";
-    new_user_data.powerups = "";
+    new_user_data.powerups = defaultPowerups;
     new_user_data.total_points = "0";
     new_user_data.last_login = new Date();
     new_user_data.high_score = "0";
@@ -191,8 +192,10 @@ app.put("/todo", function(request, response){
   var taskname = request.body.name;
   var priority = request.body.priority;
   var due_date = request.body.due_date;
-  var timestamp = request.body.timestamp
+  var timestamp = request.body.timestamp;
   var completed = request.body.completed;
+  console.log(JSON.stringify(localData[username].todoList));
+  console.log(timestamp);
   
   if (username != undefined &&
        taskname != undefined &&
@@ -206,7 +209,7 @@ app.put("/todo", function(request, response){
         doesNotExist: true
       });
     } else {
-      localData.todoList[timestamp] = 
+      localData[username].todoList[timestamp] = 
         {
           "name": taskname,
           "priority": priority,
@@ -215,9 +218,9 @@ app.put("/todo", function(request, response){
           "completed": completed
         };
     
-      writeUserData(username, userData);
+      writeUserData(username, localData[username]);
       response.send({
-        userData: userData,
+        userData: localData[username],
         success: true
       });
     }
