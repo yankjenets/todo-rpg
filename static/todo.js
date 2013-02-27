@@ -183,7 +183,7 @@ function userLoginDOM() {
 
 function userLogoutDOM() {
   $(".login").removeClass("clear");
-  $("#wrapper").addClass("clear");
+  $(".wrapper").addClass("clear");
   logout(user);
   user = undefined;
   data = [];
