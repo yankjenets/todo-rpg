@@ -17,8 +17,15 @@ var MIN_LENGTH = 5;
 var users;
 var localData = {};
 
-var defaultAchievements = [{description: "Reached level 5", completed: false}, {description: "Completed 5 tasks", completed: false}];
-var defaultPowerups = [{id: 0, description: "Delay 1 day", cost: 50}, {id: 1, description: "Raise Priority", cost: 10}];
+var defaultAchievements = [{description: "Complete 1 task", completed: false}, 
+                          {description: "Completed 5 tasks", completed: false}, 
+                          {description: "Complete a high priority task", completed: false},
+                          {description: "Complete a task worth over 100 points", completed: false},
+                          {description: "Reached level 5", completed: false}, 
+                          {description: "Career score over 1000", completed: false},
+                          {description: "Complete a task over a day in advance", completed: false}];
+var defaultPowerups = [{description: "Delay 1 day", cost: 50}, 
+                       {description: "Raise Priority", cost: 10}];
 
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
@@ -194,8 +201,6 @@ app.put("/todo", function(request, response){
   var due_date = request.body.due_date;
   var timestamp = request.body.timestamp;
   var completed = request.body.completed;
-  console.log(JSON.stringify(localData[username].todoList));
-  console.log(timestamp);
   
   if (username != undefined &&
        taskname != undefined &&
@@ -237,7 +242,6 @@ app.post("/todo/complete", function(request, response) {
   var id = parseInt(request.param("id"));
   var completionDate = request.param("completionDate");
   var points = request.param("points");
-  console.log(localData);
   
   if (username != undefined &&
       id != undefined &&

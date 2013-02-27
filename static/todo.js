@@ -185,12 +185,13 @@ function showAchievements() {
     var achievementAttributes = {
       "class": "task"
     }
-    if(achievement.completed === true || achievement.completed === "true") {
-      var description = $("<h6>").text(achievement.description);
-      achievementObject = $("<li>", achievementAttributes);
-      achievementObject.append(description);
-      $("#achievementList").append(achievementObject);
+    var description = $("<h6>").text(achievement.description);
+    achievementObject = $("<li>", achievementAttributes);
+    achievementObject.append(description);
+    if(!(achievement.completed === true || achievement.completed === "true")) {
+      description.addClass("strikethrough");
     }
+    $("#achievementList").append(achievementObject);
   }
 
   $(".wrapper").addClass("clear");
@@ -454,7 +455,7 @@ function updateLevel() {
 }
 
 function updateAchievements() {
-  if(data.level >= 5) {
+  if(data.total_tasks >= 1) {
     data.achievements[0].completed = true;
   } else {
     data.achievements[0].completed = false;
@@ -464,6 +465,18 @@ function updateAchievements() {
     data.achievements[1].completed = true;
   } else {
     data.achievements[1].completed = false;
+  }
+
+  if(data.level >= 5) {
+    data.achievements[4].completed = true;
+  } else {
+    data.achievements[4].completed = false;
+  }
+
+  if(data.total_points >= 1000) {
+    data.achievements[5].completed = true;
+  } else {
+    data.achievements[5].completed = false;
   }
 }
 
@@ -529,6 +542,17 @@ function completeTask(id) {
         updateTotalPoints(score);
         data.total_tasks = parseInt(data.total_tasks) + 1;
         data.completed_history.push([completionDate, score]);
+        console.log("priority: " + task.priority);
+        if(task.priority == 2) {
+          data.achievements[2].completed = true;
+        }
+        if(score >= 100) {
+          data.achievements[3].completed = true;
+        }
+        if(parseInt(task.due_date) - parseInt(completionDate.getTime()) >= MILLI_IN_24_HOURS) {
+          data.achievements[6].completed = true;
+        }
+
         refreshData();
         setCanvasScore(score);
       }
@@ -650,6 +674,7 @@ function login(username, password) {
       	data = response.userData;
         $("#username").val("");
         $("#pass").val("");
+        refreshData();
         refreshDOM();
       } else {
         //only clear password field if failed login
