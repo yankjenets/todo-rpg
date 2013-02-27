@@ -45,3 +45,19 @@ Required Elements:
 	
 Design Process, User Testing and Iterative Design:
 
+Here is an outline of our design process and iterative design. To assist in the description, I will make reference to screenshots in the screenies folder that were taken throughout the process of creating this app as evidence to our iterative process.
+
+- Initial Design:
+	- Our initial design focused on a clean, simple look that was easy to understand and use. We wanted a menu bar that contained the title of our app, as well as the user information (such as level and points). Then below the menu bar would be a form for creating new tasks, and then the list of tasks. Our initial main screen design can be seen in Design1.png.
+	- The next step in improving the overall look and feel of this main screen was to improve the menu bar. These improvements can be seen in Design2.png.
+	
+- Login Design:
+	- Once the main design was established, we needed to add a way for users to register and login. Initially, we added a form that was placed over the rest of the page. This form looked decent, but being able to see other elements of the main page was an eyesore. The initial login screen can be seen in Design3.png.
+	
+- Finished/Delete Functionality:
+	- Once the functionality to delete and complete tasks were added, we needed to add a way to distinguish completed tasks from ones that still need to be completed. Our design choice for this can be seen in Design4.png.
+	- Our initial canvas design which displays animated text as well as the current time can also be seen in Design4.png.
+	
+- User Testing:
+	- We received the following user feedback during user testing:
+		-
