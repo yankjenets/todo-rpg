@@ -524,6 +524,7 @@ function login(username, password) {
       if(response.success) {
         console.log("Logged in successfully as " + username + ".");
         $(".login").addClass("clear");
+        $(".wrapper").removeClass("clear");
         user = username;
       	data = response.userData;
         refreshDOM();
@@ -547,6 +548,7 @@ function new_user(username, password) {
       if(response.success) {
         console.log("new user created successfully");
         $(".login").addClass("clear");
+        $(".wrapper").removeClass("clear");
         user = username;
         data = response.userData;
         login(username, password);
