@@ -31,55 +31,51 @@
         <p> (Warning: Passwords are saved as plaintext.)</p>
       </div>
     </div>
-    <div class="wrapper">
-    <div class="header">
-      <h1 class="blue"> RPG</h1><h1>.Do</h1>
-      <div class="points">
-        <h3>Level:</h3> <h3 class="number" id="level">00</h3>
-        <h3> Points:</h3> 
-        <h3 class="number" id="points">00</h3>
-        <h6>In the last 24 hours</h6>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <form class="input">
-        <label class="block">Enter what you want to do:</label>
-        <input id="task-input" name="task" placeholder="Title"/>
-        <div>
-          <label>Priority:</label><select id="priority-input" name="priority">
-            <option value="0">Low</option>
-            <option value="1">Medium</option>
-            <option value="2">High</option>
-          </select>
-          <label>Due Date:</label>
-
-          <input type="date" id="date-input" name="duedate">
-          <div>
-            <label>Time Due:</label>
-            <input id="hour-input" class=time>:<input id="minute-input" class=time> <select id="time-parity-input" name=ampm>
-              <option value="0">AM</option>
-              <option value="12">PM</option>
-            </select>
-
-          </div> 
-          <a id="submitTask" class="submit button">Submit</a>
+    <div id="wrapper" class="clear">
+      <div class="header">
+        <h1 class="blue"> RPG</h1><h1>.Do</h1>
+        <div class="points">
+          <h3>Level:</h3> <h3 class="number" id="level">00</h3>
+          <h3> Points:</h3> 
+          <h3 class="number" id="points">00</h3>
+          <h6>In the last 24 hours</h6>
         </div>
-      </form>
+      </div>
 
-      <p id="taskInputError" class="red"></p>
+      <div class="content">
+        <form class="input">
+          <label class="block">Enter what you want to do:</label>
+          <input id="task-input" name="task" placeholder="Title"/>
+          <div>
+            <label>Priority:</label><select id="priority-input" name="priority">
+              <option value="0">Low</option>
+              <option value="1">Medium</option>
+              <option value="2">High</option>
+            </select>
+            <label>Due Date:</label>
 
-    <canvas id="myCanvas" width="600" height="75">
-    </canvas>
+            <input type="date" id="date-input" name="duedate">
+            <div>
+              <label>Time Due:</label>
+              <input id="hour-input" class=time>:<input id="minute-input" class=time> <select id="time-parity-input" name=ampm>
+                <option value="0">AM</option>
+                <option value="12">PM</option>
+              </select>
 
-    <div class="tasks">
+            </div> 
+            <a id="submitTask" class="submit button">Submit</a>
+          </div>
+        </form>
 
-      <ul class="todo">
+        <p id="taskInputError" class="red"></p>
 
-      </ul>
-        </li>
+      <canvas id="myCanvas" width="600" height="75">
+      </canvas>
 
+      <div class="tasks">
+        <ul class="todo">
+        </ul>
+      </div>
     </div>
   </div>
   </body>

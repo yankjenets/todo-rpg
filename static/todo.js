@@ -530,6 +530,7 @@ function login(username, password) {
       if(response.success) {
         console.log("Logged in successfully as " + username + ".");
         $(".login").addClass("clear");
+        $("#wrapper").removeClass("clear");
         user = username;
       	data = response.userData;
         $("#username").val("");
@@ -553,7 +554,6 @@ function new_user(username, password) {
     success: function(response) {
       if(response.success) {
         console.log("new user created successfully");
-        $(".login").addClass("clear");
         user = username;
         data = response.userData;
         login(username, password);
