@@ -86,6 +86,7 @@ canvas{
   margin-bottom: 30px;
 }
 
+
 h1 {
   margin: 0 0 0 0;
   display:inline;
@@ -115,6 +116,18 @@ h1 {
   display:inline;
   margin-left: 17%;
 
+}
+
+#userSignout{
+  position:relative;
+  left:610px;
+  bottom:60px;;
+}
+
+#achievementButton{
+  position:relative;
+  left:520px;
+  bottom:13px;
 }
 
 /*************
@@ -223,3 +236,21 @@ input {
   position: relative;
   left: 64%;
 } 
+
+/********************
+ * Achivment page
+ * ******************/
+
+.achievements{
+  margin-top:30px;
+}
+
+#todoButton{
+  margin: 30px 0 15px 20px;
+
+}
+
+#achievementList{
+  margin:30px 0 0 15px;;
+  width:60%;
+}
