@@ -36,6 +36,10 @@ $(document).ready(function(){
     userLoginDOM();
   });
   
+  $("#userSignout").click(function() {
+    userLogoutDOM();
+  });
+
   $("#userRegister").click(function() {
     userRegisterDOM();
   });
@@ -44,6 +48,13 @@ $(document).ready(function(){
     addItemDOM();
   });
 
+  $("#achievementButton").click(function() {
+    showAchievements();
+  });
+
+  $("#todoButton").click(function() {
+    hideAchievements();
+  });
 
   resetDateFields();
 
@@ -153,6 +164,32 @@ function drawNewHighScore(){
 
 //DOM STUFF
 
+function hideAchievements() {
+  $(".wrapper").removeClass("clear");
+  $(".achievements").addClass("clear");
+}
+
+function showAchievements() {
+  $("#achievementList").html(""); 
+  var achievement;
+  var i;
+  for(i = 0; i < data.achievements.length; i++) {
+    achievement = data.achievements[i];
+    var achievementAttributes = {
+      "class": "task"
+    }
+    if(achievement.completed === true || achievement.completed === "true") {
+      var description = $("<h6>").text(achievement.description);
+      achievementObject = $("<li>", achievementAttributes);
+      achievementObject.append(description);
+      $("#achievementList").append(achievementObject);
+    }
+  }
+
+  $(".wrapper").addClass("clear");
+  $(".achievements").removeClass("clear");
+}
+
 function resetDateFields() {
   var currDate = new Date();
   var today = currDate.toISOString().split("T")[0];
@@ -163,6 +200,9 @@ function resetDateFields() {
   }
   $("#date-input").val(today);
   $("#hour-input").val(hour % 12);
+  if($("#hour-input").val() == "0") {
+    $("#hour-input").val(12);
+  }
   $("#minute-input").val(minute);
   if(hour > 12) {
     $("#time-parity-input").val(12);
@@ -176,6 +216,14 @@ function userLoginDOM() {
   var password = $("#pass").val();
 
   login(username, password);
+}
+
+function userLogoutDOM() {
+  $(".login").removeClass("clear");
+  $(".wrapper").addClass("clear");
+  logout(user);
+  user = undefined;
+  data = [];
 }
 
 function userRegisterDOM() {
@@ -301,6 +349,8 @@ function refreshDOM() {
   //Points and level
   $("#level").html(data.level);
   $("#points").html(data.total_points);
+  $("#running_total").html(data.running_total);
+  $("#high_score").html(data.high_score);
 
   $("#taskInputError").html("");
 }
@@ -369,6 +419,20 @@ function updateLevel() {
   }
 }
 
+function updateAchievements() {
+  if(data.level >= 5) {
+    data.achievements[0].completed = true;
+  } else {
+    data.achievements[0].completed = false;
+  }
+
+  if(data.total_tasks >= 5) {
+    data.achievements[1].completed = true;
+  } else {
+    data.achievements[1].completed = false;
+  }
+}
+
 function updateHighScore(time_period) {
   var date = new Date();
   var i;
@@ -382,7 +446,7 @@ function updateHighScore(time_period) {
       history.splice(i, 1);
       numToDelete++;
     } else {
-      highScore += history[i][SCORE_INDEX];
+      highScore = parseInt(highScore) + parseInt(history[i][SCORE_INDEX]);
     }
   }
   $.ajax({
@@ -401,6 +465,7 @@ function updateHighScore(time_period) {
     console.log("New high score in last 24 hours: " + data.high_score);
     canvasState = NEWHIGHSCORE;
   }
+  data.running_total = highScore;
 }
 
 function completeTask(id) {
@@ -429,11 +494,13 @@ function completeTask(id) {
         task.completed = true;
         updateTotalPoints(score);
         updateLevel();
+        data.total_tasks = parseInt(data.total_tasks) + 1;
         console.log("COMPLETED LAST 24 before: " + JSON.stringify(data.completed_history, null, 4));
         data.completed_history.push([completionDate, score]);
         console.log("COMPLETED LAST 24 after: " + JSON.stringify(data.completed_history, null, 4));
         console.log("PREV HIGH SCORE: " + data.high_score);
         updateHighScore(MILLI_IN_SECOND * 30);
+        updateAchievements();
         console.log("AFTER HIGH SCORE: " + data.high_score);
         updateUser();
         refreshDOM();
@@ -458,7 +525,10 @@ function updateUser() {
       level: data.level,
       powerups: data.powerups,
       total_points: data.total_points,
-      high_score: data.high_score
+      high_score: data.high_score,
+      running_total: data.running_total,
+      total_tasks: data.total_tasks,
+      achievements: data.achievements
     },
     success: function() {
 
@@ -554,7 +624,7 @@ function login(username, password) {
     data: {user: username, pass: password},
   	success: function(response) {
       if(response.success) {
-        console.log("Logged in successfully as " + username + ".");
+        $("#loginError").html("");
         $(".login").addClass("clear");
         $(".wrapper").removeClass("clear");
         user = username;
@@ -565,9 +635,25 @@ function login(username, password) {
       } else {
         //only clear password field if failed login
         $("#pass").val("");
-        $("#loginError").html("incorrect password");
+        if(response.doesNotExist) {
+          $("#loginError").html("User does not exist.");
+        }
+        if(response.wrongPassword) {
+          $("#loginError").html("Incorrect password");
+        }
       }
   	}
+  });
+}
+
+function logout() {
+  $.ajax({
+    type: "put",
+    url: "/logout",
+    data: {user: user},
+    success: function(response) {
+
+    }
   });
 }
 
@@ -579,9 +665,6 @@ function new_user(username, password) {
     data: {user: username, pass: password},
     success: function(response) {
       if(response.success) {
-        console.log("new user created successfully");
-        $(".login").addClass("clear");
-        $(".wrapper").removeClass("clear");
         user = username;
         data = response.userData;
         login(username, password);

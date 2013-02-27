@@ -17,6 +17,8 @@ var MIN_LENGTH = 5;
 var users;
 var localData = {};
 
+var defaultAchievements = [{description: "Reached level 5", completed: false}, {description: "Completed 5 tasks", completed: false}];
+
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
   fs.readFile(filename, function(err, data) {
@@ -69,8 +71,32 @@ app.get("/login", function(request, response) {
       });
     });
   } else {
+    if(password == undefined) {
+      response.send({
+        doesNotExist: true,
+        success: false
+      });
+    } else {
+      response.send({
+        wrongPassword: true,
+        success: false
+      });
+    }
+  }
+});
+
+//logout request
+//nothing to do serverside besides not leak memory
+app.put("/logout", function(request, response) {
+  var username = request.body.user;
+  if(localData[username] === undefined) {
     response.send({
       success: false
+    });
+  } else {
+    delete localData[username];
+    response.send({
+      success: true
     });
   }
 });
@@ -112,6 +138,10 @@ app.post("/new_user", function(request, response) {
     new_user_data.high_score = "0";
     new_user_data.completed_history = [];
     new_user_data.todoList = {};
+    new_user_data.running_total = "0";
+    new_user_data.total_tasks = "0";
+    new_user_data.achievements = defaultAchievements;
+
     writeUserData(username, new_user_data);
     
     response.send({
@@ -281,18 +311,27 @@ app.put("/profile", function(request, response){
   var powerups = request.body.powerups;
   var total_points = request.body.total_points;
   var high_score = request.body.high_score;
+  var running_total = request.body.running_total;
+  var total_tasks = request.body.total_tasks;
+  var achievements = request.body.achievements;
   
   if (username != undefined &&
       level != undefined &&
       powerups != undefined &&
       total_points != undefined &&
-      high_score != undefined) {
+      high_score != undefined &&
+      running_total != undefined &&
+      total_tasks != undefined &&
+      achievements != undefined) {
     var userData = localData[username];
     if(userData !== undefined) {
       userData.level = level;
       userData.powerups = powerups;
       userData.total_points = total_points;
       userData.high_score = high_score;
+      userData.running_total = running_total;
+      userData.total_tasks = total_tasks;
+      userData.achievements = achievements;
     
       writeUserData(username, userData);
       response.send({
