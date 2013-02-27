@@ -44,6 +44,9 @@ $(document).ready(function(){
     addItemDOM();
   });
 
+
+  resetDateFields();
+
   runCanvas();
 });
 
@@ -150,28 +153,33 @@ function drawNewHighScore(){
 
 //DOM STUFF
 
+function resetDateFields() {
+  var currDate = new Date();
+  var today = currDate.toISOString().split("T")[0];
+  var hour = currDate.getHours();
+  var minute = currDate.getMinutes();
+  $("#date-input").val(today);
+  $("#hour-input").val(hour % 12);
+  $("#minute-input").val(minute);
+  if(hour > 12) {
+    $("#time-parity-input").val(12);
+  } else {
+    $("#time-parity-input").val(0);
+  }
+}
+
 function userLoginDOM() {
   var username = $("#username").val();
   var password = $("#pass").val();
 
-  var success = login(username, password);
-  console.log(success);
-  
-  //don't clear username box if incorrect password was entered
-  if(success) {
-    $("#username").val("");
-  }
-  $("#pass").val("");
+  login(username, password);
 }
 
 function userRegisterDOM() {
   var username = $("#username").val();
   var password = $("#pass").val();
 
-  regworks = new_user(username, password);
-
-  $("#username").val("");
-  $("#pass").val("");
+  new_user(username, password);
 }  
 
 
@@ -202,10 +210,8 @@ function addItemDOM() {
 
   $("#task-input").val("");
   $("#priority-input").val("");
-  $("#date-input").val("");
-  $("#hour-input").val("");
-  $("#minute-input").val("");
-  $("#time-parity-input").val("");
+
+  resetDateFields();
   refreshDOM();
 }
 
@@ -526,15 +532,16 @@ function login(username, password) {
         $(".login").addClass("clear");
         user = username;
       	data = response.userData;
+        $("#username").val("");
+        $("#pass").val("");
         refreshDOM();
-        return true;
       } else {
+        //only clear password field if failed login
+        $("#pass").val("");
         $("#loginError").html("incorrect password");
-        return false;
       }
   	}
   });
-  return false;
 }
 
 //create a new user
@@ -551,11 +558,13 @@ function new_user(username, password) {
         data = response.userData;
         login(username, password);
       } else {
+        //only clear password field if failed register
+        $("#pass").val("");
         if(response.usernameTooShort) {
-          $("#loginError").html("Please enter a valid username.(Username > 5 chars)");
+          $("#loginError").html("Please enter a valid username.(5 or more characters)");
         }
         if(response.passwordTooShort) {
-          $("#loginError").html("Please enter a valid password.(5 or more characters");
+          $("#loginError").html("Please enter a valid password.(5 or more characters)");
         }
         if(response.alreadyExists) {
           $("#loginError").html("Sorry, that username is already taken.");
