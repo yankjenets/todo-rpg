@@ -75,6 +75,22 @@ app.get("/login", function(request, response) {
   }
 });
 
+//logout request
+//nothing to do serverside besides not leak memory
+app.put("/logout", function(request, response) {
+  var username = request.body.user;
+  if(localData[username] === undefined) {
+    response.send({
+      success: false
+    });
+  } else {
+    delete localData[username];
+    response.send({
+      success: true
+    });
+  }
+});
+
 // new user request
 app.post("/new_user", function(request, response) {
   var username = request.param("user");

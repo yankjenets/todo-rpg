@@ -36,6 +36,10 @@ $(document).ready(function(){
     userLoginDOM();
   });
   
+  $("#userSignout").click(function() {
+    userLogoutDOM();
+  });
+
   $("#userRegister").click(function() {
     userRegisterDOM();
   });
@@ -43,7 +47,6 @@ $(document).ready(function(){
   $("#submitTask").click(function() {
     addItemDOM();
   });
-
 
   resetDateFields();
 
@@ -176,6 +179,14 @@ function userLoginDOM() {
   var password = $("#pass").val();
 
   login(username, password);
+}
+
+function userLogoutDOM() {
+  $(".login").removeClass("clear");
+  $("#wrapper").addClass("clear");
+  logout(user);
+  user = undefined;
+  data = [];
 }
 
 function userRegisterDOM() {
@@ -545,6 +556,17 @@ function login(username, password) {
         $("#loginError").html("incorrect password");
       }
   	}
+  });
+}
+
+function logout() {
+  $.ajax({
+    type: "put",
+    url: "/logout",
+    data: {user: user},
+    success: function(response) {
+
+    }
   });
 }
 
