@@ -69,9 +69,17 @@ app.get("/login", function(request, response) {
       });
     });
   } else {
-    response.send({
-      success: false
-    });
+    if(password == undefined) {
+      response.send({
+        doesNotExist: true,
+        success: false
+      });
+    } else {
+      response.send({
+        wrongPassword: true,
+        success: false
+      });
+    }
   }
 });
 
@@ -128,6 +136,8 @@ app.post("/new_user", function(request, response) {
     new_user_data.high_score = "0";
     new_user_data.completed_history = [];
     new_user_data.todoList = {};
+    new_user_data.running_total = "0";
+
     writeUserData(username, new_user_data);
     
     response.send({
@@ -297,18 +307,21 @@ app.put("/profile", function(request, response){
   var powerups = request.body.powerups;
   var total_points = request.body.total_points;
   var high_score = request.body.high_score;
+  var running_total = request.body.running_total;
   
   if (username != undefined &&
       level != undefined &&
       powerups != undefined &&
       total_points != undefined &&
-      high_score != undefined) {
+      high_score != undefined &&
+      running_total != undefined) {
     var userData = localData[username];
     if(userData !== undefined) {
       userData.level = level;
       userData.powerups = powerups;
       userData.total_points = total_points;
       userData.high_score = high_score;
+      userData.running_total = running_total;
     
       writeUserData(username, userData);
       response.send({

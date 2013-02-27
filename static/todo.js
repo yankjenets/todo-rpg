@@ -295,6 +295,8 @@ function refreshDOM() {
   //Points and level
   $("#level").html(data.level);
   $("#points").html(data.total_points);
+  $("#running_total").html(data.running_total);
+  $("#high_score").html(data.high_score);
 
   $("#taskInputError").html("");
 }
@@ -370,7 +372,7 @@ function updateHighScore(time_period) {
       history.splice(i, 1);
       numToDelete++;
     } else {
-      highScore += history[i][SCORE_INDEX];
+      highScore = parseInt(highScore) + parseInt(history[i][SCORE_INDEX]);
     }
   }
   $.ajax({
@@ -389,6 +391,7 @@ function updateHighScore(time_period) {
     console.log("New high score in last 24 hours: " + data.high_score);
     canvasState = NEWHIGHSCORE;
   }
+  data.running_total = highScore;
 }
 
 function completeTask(id) {
@@ -446,7 +449,8 @@ function updateUser() {
       level: data.level,
       powerups: data.powerups,
       total_points: data.total_points,
-      high_score: data.high_score
+      high_score: data.high_score,
+      running_total: data.running_total
     },
     success: function() {
 
@@ -542,7 +546,7 @@ function login(username, password) {
     data: {user: username, pass: password},
   	success: function(response) {
       if(response.success) {
-        console.log("Logged in successfully as " + username + ".");
+        $("#loginError").html("");
         $(".login").addClass("clear");
         $(".wrapper").removeClass("clear");
         user = username;
@@ -553,7 +557,12 @@ function login(username, password) {
       } else {
         //only clear password field if failed login
         $("#pass").val("");
-        $("#loginError").html("incorrect password");
+        if(response.doesNotExist) {
+          $("#loginError").html("User does not exist.");
+        }
+        if(response.wrongPassword) {
+          $("#loginError").html("Incorrect password");
+        }
       }
   	}
   });
@@ -578,9 +587,6 @@ function new_user(username, password) {
     data: {user: username, pass: password},
     success: function(response) {
       if(response.success) {
-        console.log("new user created successfully");
-        $(".login").addClass("clear");
-        $(".wrapper").removeClass("clear");
         user = username;
         data = response.userData;
         login(username, password);
