@@ -80,7 +80,13 @@ app.post("/new_user", function(request, response) {
   var username = request.param("user");
   var pass = request.param("pass");
 
-  if(username === undefined || username.length < MIN_LENGTH) {
+  if(users[username] !== undefined) {
+    //the username is already taken
+    response.send({
+      success: false,
+      alreadyExists: true
+    });
+  } else if(username === undefined || username.length < MIN_LENGTH) {
     //the username isn't valid
     response.send({
       success: false,
@@ -91,12 +97,6 @@ app.post("/new_user", function(request, response) {
     response.send({
       success: false,
       passwordTooShort: true
-    });
-  } else if (users[username] !== undefined) {
-    //the username is already taken
-    response.send({
-      success: false,
-      alreadyExists: true
     });
   } else {
     //we're good! create the new user.
