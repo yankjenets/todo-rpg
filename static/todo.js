@@ -252,10 +252,26 @@ function refreshDOM() {
     points.addClass("tskPoints");
     div.append(points_label);
     div.append(points);
+
+    //HTML for buying things. 
+    var powerups = $("<select>").addClass("powerups");
+    var delayDay = $("<option>").attr('value', 'delayday').html("Delay 1 day(2000Points)");
+    var raisePriority = $("<option>").attr('value', 'raisePri').html("Raise Priority(100Points)");
+    powerups.append(delayDay);
+    powerups.append(raisePriority);
     
+    //Get id for use in functions
+    var dateObject = data.todoList[item].timestamp;
+
+    var usepower = $("<a>").html("Use").addClass("usePower button");
+    usepower.click(usePowerUp(dateObject));
+    
+    //Buttons to finish/delete tasks
     var finished =$("<a>").html("Finished").addClass("complete button");
     var deleteBut = $("<a>").html("Delete").addClass("delete button");
-    var dateObject = data.todoList[item].timestamp;
+    var buttonCont = $("<div>").addClass("buttonCont");
+    buttonCont.append(deleteBut);
+    buttonCont.append(finished);
 
     finished.attr('id', dateObject);
     finished.click(completeClick(dateObject));
@@ -275,8 +291,9 @@ function refreshDOM() {
     todo.append(priority);
     todo.append(duedate);
     todo.append(div);
-    todo.append(deleteBut);
-    todo.append(finished);
+    todo.append(powerups);
+    todo.append(usepower);
+    todo.append(buttonCont);
     $(".todo").append(todo);
 
   }
@@ -286,6 +303,12 @@ function refreshDOM() {
   $("#points").html(data.total_points);
 
   $("#taskInputError").html("");
+}
+
+function usePowerUp(power, date){
+  return function(){
+    //TODO implement this
+  }
 }
 
 function completeClick(date) {

@@ -14,7 +14,7 @@ h3 {
 }
 
 .wrapper {
-  width: 700px;
+  width: 600px;
   margin: 10px auto 0;
 }
 
@@ -178,7 +178,7 @@ input {
   border: 1px solid #CCC;
   box-shadow: 1px 1px 1px #FAFAFA;
   background-color: #FFF;
-  width: 75%;
+  width: 80%;
 
   font-size: 20px;
   color: #555;
@@ -187,6 +187,10 @@ input {
 .done{
   background-color: #333;
 
+}
+
+.buttonCont{
+  margin-top:20px;
 }
 
 .task h3{
@@ -212,11 +216,11 @@ input {
 
 .complete {
   position:relative;
-  left: 64%;
+  left: 67%;
   top 20px;
 }
 
 .delete {
   position: relative;
-  left: 60%;
+  left: 64%;
 } 
