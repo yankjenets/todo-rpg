@@ -9,9 +9,12 @@ body {
   font-family: 'Raleway', sans-serif;
 }
 
+h3 {
+  font-size:30px;
+}
 
-#wrapper {
-  width: 600px;
+.wrapper {
+  width: 700px;
   margin: 10px auto 0;
 }
 
@@ -50,12 +53,26 @@ canvas{
  * Login Styles
  * ********************/
 .login{
-  margin:0 auto;
+  margin: 50px auto; 
+  position:fixed;
+  left:20%;
   z-index:1;
+
+
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #CCC;
+  box-shadow: 1px 1px 1px #FAFAFA;
+  background-color: #FFF;
+  width: 60%;
+
+  font-size: 20px;
+  color: #555;
 }
 
 .centered{
   margin:0 auto;
+  width:545px;
 }
 
 /***********************
@@ -201,4 +218,4 @@ input {
 .delete {
   position: relative;
   left: 60%;
-k 
+} 
