@@ -158,6 +158,9 @@ function resetDateFields() {
   var today = currDate.toISOString().split("T")[0];
   var hour = currDate.getHours();
   var minute = currDate.getMinutes();
+  if(minute < 10) {
+    minute = "0" + minute;
+  }
   $("#date-input").val(today);
   $("#hour-input").val(hour % 12);
   $("#minute-input").val(minute);
