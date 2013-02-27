@@ -60,4 +60,12 @@ Here is an outline of our design process and iterative design. To assist in the 
 	
 - User Testing:
 	- We received the following user feedback during user testing:
-		-
+		- Not clear that username/passoword must be over 5 characters
+		* If username/password incorrect, all fields should not reset
+		* Buttons should change on hover
+		* Default date (of today) should be added to created tasks
+		- Pressing Enter should log you on
+		* Animations stopped in weird place covering time
+		* Canvas should be cleared on re-login
+		* Task can be added with empty title
+	* Anything with a star has been addressed and fixed in our final project 
