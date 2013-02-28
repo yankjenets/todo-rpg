@@ -11,6 +11,7 @@ Required Elements:
 	- Examples of javascript objects
 		- data - used as a dictionary that stores a user data in todo.js
 		- similarly, localData stores multiple clients data locally in app.js 
+		- DynamicText - todo.js:63-79
 	
 2. Canvas
 	- UI contains a canvas with animated text and a clock that shows the current time
@@ -58,14 +59,19 @@ Here is an outline of our design process and iterative design. To assist in the 
 	- Once the functionality to delete and complete tasks were added, we needed to add a way to distinguish completed tasks from ones that still need to be completed. Our design choice for this can be seen in Design4.png.
 	- Our initial canvas design which displays animated text as well as the current time can also be seen in Design4.png.
 	
+- Achievements
+	- The initial design for our achievements page is shown in Design5
+	- Our final design produced after user testing is shown in Design6
+	
 - User Testing:
 	- We received the following user feedback during user testing:
-		- Not clear that username/passoword must be over 5 characters
 		* If username/password incorrect, all fields should not reset
 		* Buttons should change on hover
 		* Default date (of today) should be added to created tasks
-		- Pressing Enter should log you on
 		* Animations stopped in weird place covering time
 		* Canvas should be cleared on re-login
 		* Task can be added with empty title
 	* Anything with a star has been addressed and fixed in our final project 
+	
+- Final Product:
+	- After making our own design changes, and taking into account the opinions of this users who tested our product, our final designs are expressed in Design7 and Design8.
