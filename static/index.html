@@ -23,8 +23,10 @@
         <form>
           <input id="username" name="username" placeholder="username">
           <input id="pass" name="password" placeholder="password" type="password" >
+          <div>
           <a class="button" id="userSignon">Login</a>
           <a class="button" id="userRegister">Register</a>
+          </div>
         </form>
         <label id="loginError" class="red"></label>
         <p> To register just enter a username and password </p>
@@ -43,10 +45,12 @@
           <h3>Level:</h3> <h3 class="number" id="level">00</h3>
           <h3> Total Points:</h3> 
           <h3 class="number" id="points">00</h3>
-          <h3>Last 24 hours:</h3>
-          <h3 class="number" id="running_total">00</h3>
-          <h3>Most productive 24 hours:</h3>
-          <h3 class="number" id="high_score">00</h3>
+          <div class="points2">
+            <h3>Last 24 hours:</h3>
+            <h3 class="number" id="running_total">00</h3>
+            <h3>Most productive 24 hours:</h3>
+            <h3 class="number" id="high_score">00</h3>
+          </div>
         </div>
         <div class="headerButtons">
         <a class="button" id="userSignout">Log Out</a>

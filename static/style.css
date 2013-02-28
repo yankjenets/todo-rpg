@@ -72,7 +72,7 @@ canvas{
 
 .centered{
   margin:0 auto;
-  width:545px;
+  width:90%;
 }
 
 /***********************
@@ -115,7 +115,10 @@ h1 {
 .points {
   display:inline;
   margin-left: 17%;
+}
 
+.points2 {
+  margin-left:17%
 }
 
 #userSignout{
@@ -174,6 +177,9 @@ input {
   top: -29px;
 }
 
+#date-input{
+  width: 210px;
+}
 
 #task{
   width:322px;
