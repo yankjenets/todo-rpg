@@ -1,5 +1,5 @@
 var data = [];
-var user;
+var user = "";
 
 var canvas;
 var ctx;
@@ -700,7 +700,7 @@ function logout() {
     url: "/logout",
     data: {user: user},
     success: function(response) {
-
+		user = "";
     }
   });
 }
