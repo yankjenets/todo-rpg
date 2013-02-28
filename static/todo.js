@@ -189,7 +189,7 @@ function showAchievements() {
     achievementObject = $("<li>", achievementAttributes);
     achievementObject.append(description);
     if(!(achievement.completed === true || achievement.completed === "true")) {
-      description.addClass("strikethrough");
+      achievementObject.addClass("grayedOut");
     }
     $("#achievementList").append(achievementObject);
   }

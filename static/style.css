@@ -118,7 +118,11 @@ h1 {
 }
 
 .points2 {
-  margin-left:17%
+  margin-left:370px;
+}
+
+.points3 {
+  margin-left:258px;
 }
 
 #userSignout{
@@ -263,4 +267,8 @@ input {
 
 .strikethrough{
   text-decoration: line-through;
+}
+
+.grayedOut { 
+  background-color: #333;
 }
