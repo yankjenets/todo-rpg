@@ -371,7 +371,7 @@ function refreshDOM() {
 
 function usePowerUp(item){
   return function(){
-    var index = parseInt($(this).parent().children("select").find(":selected").val());
+    var index = parseInt($(this).parent().children("select").find(":selected").index());
     var cost = parseInt(data.powerups[index].cost);
     if(data.total_points > cost) {
       switch(index) {

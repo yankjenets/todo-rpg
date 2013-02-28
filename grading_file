@@ -11,16 +11,16 @@ Required Elements:
 	- Examples of javascript objects
 		- data - used as a dictionary that stores a user data in todo.js
 		- similarly, localData stores multiple clients data locally in app.js 
-		- DynamicText - todo.js:63-79
+		- DynamicText - todo.js:71-92
 	
 2. Canvas
 	- UI contains a canvas with animated text and a clock that shows the current time
 	- Code:
-		- todo.js:26-154
+		- todo.js:25-161
 	
 3. HTML
 	- Main content is created through HTML, either expressly in index.html, or through JQuery DOM manipulation in todo.js
-	- A form with validation is used for login and can be seen in index.html:23-28
+	- A form with validation is used for login and can be seen in index.html:23-30
 	
 4. CSS
 	- CSS was used to stylize the presentation of our application in style.css
@@ -32,12 +32,12 @@ Required Elements:
 5-6. DOM Manipulation, JQuery
 	- JQuery and DOM Manipulation is used throughout todo.js to add objects and change their appearance in real time
 	- Code including DOM Manipulation and JQuery:
-		- todo.js:157-317
+		- todo.js:164-439
 		
 7. AJAX Client
 	- AJAX was used to communicate requests with the server, and the share data between the client and server
 	- AJAX Client code:
-		- todo.js:440-608
+		- todo.js:570-734
 		
 8. AJAX Server
 	- AJAX was used to store and persist data in text files and to communicate this data with clients

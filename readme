@@ -6,4 +6,7 @@ Tyler Healy - thealy
 
 The RPG.do project is an attempt to make organizing your life more fun and interactive. This app is designed to give you extra motivation to accomplish your tasks, both big and small, by awarding points for each task completed. These tasks can be used to buy "power-ups" and rewards, and accomplishing multiple tasks can lead you to earning achievements.
 
+The server runs on port 8889.
+The client runs by loading static/index.html
+
 Usage of the app is simple. A user can register just by giving a username and password. This username and password can then be later used to log in to the application. Once logged in, users can add tasks, setting everything from the title of the task, to the due date, to the priority of the task. Once a task has been created, the user "completes" the task by clicking on the associated "Finished" button. This credits the user with a score associated with the task. This score is calculated by taking into account how far before the due date the task was completed and the priority of the task. These points level up a user, moving them closer to accomplishing the in-game achievements. They can also be used to buy rewards.
